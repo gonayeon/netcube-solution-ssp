@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default-layout.html}"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title th:text="#{page.title.userDevice}">[NPass Self Serviced Portal] User Device Page</title>
+
+    <th:block layout:fragment="script">
+        <script th:inline="javascript">
+            const pageName = "USER_DEVICE";
+            const userDeviceLogDescriptions = [[${userDeviceLogDescriptions}]];
+        </script>
+
+        <script type="text/javascript" th:src="@{/js/device/userDevice.js}"></script>
+        <script type="text/javascript" th:src="@{/js/device/wifiSetting.js}"></script>
+    </th:block>
+</head>
+<body>
+    <main layout:fragment="content" class="h-screen pt-[8.9vh] lg:pt-20 lg:pb-[100px] md:min-h-[705px] overflow-auto">
+        <!-- pc contents -->
+        <div class="hidden lg:block w-[95%] max-w-[1160px] mx-auto pt-[4.5vh] overflow-auto" id="pcSection">
+            <div class="flex h-[60px] mb-[1vh]">
+                <h3 class="text-3xl font-bold flex items-center mr-12">
+                    <span class="w-[9px] h-[9px] bg-black rounded-full mr-[15px]"></span>
+                    <span th:text="#{pc.userDevice.title}">사용자 단말 관리</span>
+                </h3>
+                <div class="grow text-xs text-waterloo-600 *:flex *:justify-end *:items-center *:h-1/2">
+                    <ul class="border-b border-waterloo-600 *:px-1">
+                        <li><a href="/" th:text="#{pc.common.path.root}">HOME</a></li>
+                        <li><a href="/user-device" th:text="#{pc.common.path.userDevice}">DEVICE</a></li>
+                    </ul>
+                    <p>
+                        <img src="/images/icon/infor_square.svg" class="mr-[7px]">
+                        <span th:text="#{pc.userDevice.guideMessage}">3개월 미사용 시 기기가 자동으로 삭제됩니다.</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class=" flex justify-end gap-5 mb-[3vh]">
+                <div class="border border-waterloo-600 rounded-[3px] flex items-center">
+                    <!--deviceTypes-->
+                    <select onchange="renderDeviceList();" id="deviceSelect" class="h-[38px] pl-3 pr-10 font-medium text-waterloo-600" style="background: url(/images/icon/down-arrow-gray.svg) no-repeat top 11px right 10px/auto;">
+                        <option th:each="deviceType : ${deviceTypes}" th:value="${deviceType.getDeviceTypeCode()}" th:utext="${deviceType.name()}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="rounded-[5px_5px_0_0] max-h-[350px] overflow-auto">
+                <table class="w-full text-center table-fixed *:*:h-[50px]">
+                    <thead class="bg-blue-ribbon-950 text-sm font-semibold text-white">
+                        <tr class="*:after:content-['|'] *:after:font-normal *:after:float-right">
+                            <th:block th:if="${ipaIsUsed == true}">
+                                <th scope="col" class="w-[10%]"></th>
+                                <th scope="col" class="w-[12%]" th:text="#{pc.userDevice.tableHeader.no}">기기번호</th>
+                                <th scope="col" class="w-[21%]" th:text="#{pc.userDevice.tableHeader.nickname}">기기명</th>
+                                <th scope="col" class="w-[30%]" th:text="#{pc.userDevice.tableHeader.macAddress}">물리적 주소</th>
+                                <th scope="col" class="w-[17%]" th:text="#{pc.userDevice.tableHeader.registerDate}">등록일</th>
+                                <th scope="col" class="w-[10%] last:after:content-none" th:text="#{pc.userDevice.tableHeader.menu}">메뉴</th>
+                            </th:block>
+
+                            <th:block th:if="${ipaIsUsed == false}">
+                                <th scope="col" class="w-[14%]" th:text="#{pc.userDevice.tableHeader.no}">기기번호</th>
+                                <th scope="col" class="w-[23%]" th:text="#{pc.userDevice.tableHeader.nickname}">기기명</th>
+                                <th scope="col" class="w-[32%]" th:text="#{pc.userDevice.tableHeader.macAddress}">물리적 주소</th>
+                                <th scope="col" class="w-[19%]" th:text="#{pc.userDevice.tableHeader.registerDate}">등록일</th>
+                                <th scope="col" class="w-[12%] last:after:content-none" th:text="#{pc.userDevice.tableHeader.menu}">메뉴</th>
+                            </th:block>
+                        </tr>
+                    </thead>
+                    <tbody id="deviceList"></tbody>
+                </table>
+            </div>
+
+            <div class="border border-mischka-400 rounded-[3px] flex text-mischka-400 text-sm font-bold h-[58px] mt-[6vh] shadow-[2px_2px_4px_rgba(0,0,0,0.25)]">
+                <h4 class="border-r border-mischka-400 w-[143px] flex justify-center items-center" th:text="#{pc.userDevice.addMenu.title}">현재 접속단말</h4>
+                <div class="addMenu-middle grow flex justify-between p-[10px]">
+                    <div class="grow flex items-center gap-5">
+                        <input id="deviceNickname" type="text" class="border border-santas-gray-600 w-[16.7rem] h-full rounded-[3px] px-[10px] placeholder:text-mischka-400" autocomplete="off" th:placeholder="#{pc.userDevice.addMenu.input.placeholder.nickname}">
+                        <p>
+                            <span th:text="#{pc.userDevice.addMenu.macAddress}">Mac Address : </span>
+                            <span id="deviceMacAddress"><!-- MAC address --></span>
+                        </p>
+                    </div>
+
+                    <button id="registerDeviceButton" onclick="startSaveDevice();" type="button" class="bg-mischka-900 w-[178px] text-white rounded-[3px] leading-none" th:text="#{pc.userDevice.addMenu.button.add}">무선 네트워크 설정</button>
+
+                    <th:block th:if="${ipaIsUsed == true}">
+                        <button id="replaceDeviceButton" onclick="startReplaceDevice();" type="button" class="hidden bg-mischka-900 w-[178px] text-white rounded-[3px] leading-none" th:text="#{pc.userDevice.addMenu.button.replace}">단말 교체</button>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+
+        <!-- mobile contents -->
+        <div class="block lg:hidden h-full" id="mobileSection">
+            <div class="h-[calc(100%-17vh)] p-[4%]">
+                <div class="flex mt-2 mb-6 text-center *:w-[25%] *:h-12 *:text-base" id="deviceTypeSelectTab">
+                    <button type="button" th:each="deviceType : ${deviceTypes}" onclick="mobileRenderDeviceList(this);">
+                        <label class="flex justify-center items-center h-full px-2 mx-auto transition-all-3ms-ease has-[input:checked]:border-b has-[input:checked]:border-boulder-500 has-[input:checked]:font-bold">
+                            <input type="radio" name="deviceType" th:value="${deviceType.getDeviceTypeCode()}">
+                            <span class="whitespace-nowrap overflow-hidden text-ellipsis" th:text="${deviceType.name()}"></span>
+                        </label>
+                    </button>
+                </div>
+
+                <ul class="h-[calc(100%-1.75rem-5rem)] text-sm overflow-auto *:mb-3" id="deviceList"></ul>
+            </div>
+
+            <div class="flex flex-col justify-center gap-[2vh] w-full h-[17vh] bg-blue-ribbon-950 text-white text-base px-[4%] rounded-t-xl">
+                <div class="flex items-center gap-[2%] px-1 text-nowrap">
+                    <h3 th:text="#{mobile.userDevice.addMenu.title}">현재 접속단말</h3>
+                    <p class="grow whitespace-nowrap overflow-hidden text-ellipsis">
+                        <span th:text="#{mobile.userDevice.addMenu.macAddress}">Mac Address : </span>
+                        <span id="deviceMacAddress"></span>
+                    </p>
+                </div>
+                <div class="flex gap-[2%] h-11 *:rounded-md">
+                    <input id="deviceNickname" class="text-black w-3/5 px-3 border-2 border-blue-ribbon-950 whitespace-nowrap overflow-hidden text-ellipsis" type="text" th:placeholder="#{mobile.userDevice.addMenu.input.placeholder.nickname}" autocomplete="off">
+                    <button id="registerDeviceButton" onclick="startSaveDevice();" type="button" class="bg-black w-[38%] font-bold text-pretty leading-none" th:text="#{mobile.userDevice.addMenu.button.add}">무선 네트워크 설정</button>
+
+                    <th:block th:if="${ipaIsUsed == true}">
+                        <button id="replaceDeviceButton" onclick="startReplaceDevice();" type="button" class="hidden bg-black w-[38%] font-bold text-pretty leading-none" th:text="#{mobile.userDevice.addMenu.button.replace}">단말 교체</button>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default-layout.html}"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title th:text="#{page.title.notice.list}">[NPass Self Serviced Portal] Notice List Page</title>
+
+    <th:block layout:fragment="script">
+        <script th:inline="javascript">
+            const pageName = "NOTICE_LIST";
+        </script>
+    </th:block>
+</head>
+<body>
+    <main layout:fragment="content" class="h-screen pt-[8.9vh] lg:pt-20 lg:pb-[100px] md:min-h-[705px] overflow-auto">
+        <!-- pc contents -->
+        <div class="hidden lg:block w-[95%] max-w-[1160px] mx-auto pt-[4.5vh] overflow-auto">
+            <div class="flex h-[45px] mb-[1vh]">
+                <h3 class="text-3xl font-bold flex items-center mr-12">
+                    <span class="w-[9px] h-[9px] bg-black rounded-full mr-[15px]"></span>
+                    <span th:text="#{pc.notice.list.title}">공지사항</span>
+                </h3>
+                <ul class="grow h-1/2 border-b border-waterloo-600 flex justify-end items-center text-xs text-waterloo-600 *:px-1">
+                    <li><a href="/" th:text="#{pc.common.path.root}">HOME</a></li>
+                    <li>&#62;</li>
+                    <li><a href="/notice" th:text="#{pc.common.path.notice}">NOTICE</a></li>
+                </ul>
+            </div>
+
+            <form th:action="@{/notice}" th:method="get" class="h-[38px] text-[14px] flex justify-end mb-[3vh]">
+                <div class="search-input border border-portage-500 w-[360px] rounded-[3px] flex has-[input:focus]:shadow-[2px_2px_4px_rgba(0,0,0,0.25)] transition-all-3ms-ease">
+                    <input type="hidden" name="page" th:value="1">
+                    <input type="hidden" name="size" th:value="10">
+                    <input type="text" name="searchKeyword" th:value="${param.searchKeyword}" th:placeholder="#{pc.notice.list.search.input.placeholder}" autocomplete="off" class="searchBar grow px-[10px] bg-transparent">
+                    <button type="submit" id="searchBtn" class="notice_searchBtn bg-portage-500 w-[38px] flex justify-center items-center">
+                        <img src="/images/icon/search.svg" alt="search ">
+                    </button>
+                </div>
+            </form>
+
+            <div class="flex flex-col justify-between min-h-[560px] rounded-[5px_5px_0_0] overflow-hidden">
+                <table class="w-full text-center table-fixed *:*:h-[50px]">
+                    <thead class="bg-blue-ribbon-950 text-sm font-semibold text-white">
+                        <tr class="*:after:content-['|'] *:after:font-normal *:after:float-right">
+                            <th scope="col" class="w-[9%]" th:text="#{pc.notice.list.tableHeader.no}">번호</th>
+                            <th scope="col" class="w-[57%]" th:text="#{pc.notice.list.tableHeader.title}">제목</th>
+                            <th scope="col" class="w-[18%]" th:text="#{pc.notice.list.tableHeader.registerDate}">작성일</th>
+                            <th scope="col" class="w-[16%] last:after:content-none"  th:text="#{pc.notice.list.tableHeader.adminId}">작성자</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="text-xs px-1 tracking-[0.095em] *:border-b *:border-mischka-300">
+                        <tr th:if="${#lists.isEmpty(notices)}">
+                            <td colspan="4" th:text="#{pc.notice.list.no.list}">게시물이 존재하지 않습니다.</td>
+                        </tr>
+
+                        <tr th:if="${!#lists.isEmpty(notices)}" th:each="notice : ${notices}" class="hover:bg-[#e5ebff] transition-all-3ms-ease odd:bg-boulder-50 *:px-[1%] *:overflow-hidden *:whitespace-nowrap *:text-ellipsis">
+                            <td th:text="${notice.noticeId}">번호</td>
+                            <td th:id="noticeId_ +${notice.noticeId}">
+                                <a th:href="@{/notice/detail/{id}
+                                                            (id            = ${notice.noticeId},
+                                                             page          = ${pagination.page},
+                                                             size          = 10,
+                                                             searchKeyword = ${param.searchKeyword})}"
+                                    th:text="${notice.noticeTitle}">제목</a>
+                            </td>
+                            <td th:text="${#temporals.format(notice.noticeCreateDate, 'yyyy/MM/dd')}">작성일</td>
+                            <td th:text="${notice.adminId}">작성자</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <ul id="pagination" class="flex justify-center items-center gap-1 h-[21px] mt-[4.5vh] *:h-full">
+                    <li>
+                        <button type="button" th:onclick="|location.href='@{/notice(page          = ${pagination.startPage},
+                                                                                    size          = 10,
+                                                                                    searchKeyword = ${param.searchKeyword})}'|">
+                            <img src="/images/icon/first.svg" class="w-[21px] h-auto" alt="First Page">
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn" th:onclick="|location.href='@{/notice(page          = ${pagination.prevPage},
+                                                                                                size          = 10,
+                                                                                                searchKeyword = ${param.searchKeyword})}'|">
+                            <img src="/images/icon/prev.svg" class="w-[21px] h-auto" alt="Previous Page">
+                        </button>
+                    </li>
+
+                    <li th:each="pageNumber : ${#numbers.sequence(pagination.startPage, pagination.endPage)}" class="paging-btn w-[21px] h-[21px] rounded-[3px] flex justify-center items-center transition-all-3ms-ease *:pt-[1px]">
+                        <a th:attr="class=${pageNumber == pagination.page ? 'active' : ''}" th:href="@{/notice(page          = ${pageNumber},
+                                                                                                                size          = 10,
+                                                                                                                searchKeyword = ${param.searchKeyword})}" th:text="${pageNumber}">1</a>
+                    </li>
+
+                    <li>
+                        <button type="button" class="btn" th:onclick="|location.href='@{/notice(page          = ${pagination.nextPage},
+                                                                                                size          = 10,
+                                                                                                searchKeyword = ${param.searchKeyword})}'|">
+                            <img src="/images/icon/next.svg" class="w-[21px] h-auto" alt="Next Page">
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" th:onclick="|location.href='@{/notice(page          = ${pagination.endPage},
+                                                                                    size          = 10,
+                                                                                    searchKeyword = ${param.searchKeyword})}'|">
+                            <img src="/images/icon/last.svg" class="w-[21px] h-auto" alt="Last Page">
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- mobile contents -->
+        <div class="block lg:hidden h-full p-[3vh_4%]">
+            <div class="border border-boulder-300 rounded-lg h-12 px-4 mb-[3vh] transition-all-3ms-ease has-[input:focus]:border-2 has-[input:focus]:border-blue-ribbon-500 has-[input:focus]:shadow-[4px_4px_8px_rgba(0,0,0,0.1)]">
+                <form th:action="@{/notice}" th:method="get" class="w-full h-full flex justify-between items-center">
+                    <input type="hidden" name="page" th:value="1">
+                    <input type="hidden" name="size" th:value="10">
+                    <input name="searchKeyword" type="text" th:value="${param.searchKeyword}" th:placeholder="#{mobile.notice.list.search.input.placeholder}" autocomplete="off" class="w-[90%]">
+                    <button type="submit" class="h-[55%]">
+                        <img src="/images/icon/search-grey.svg" class="h-full w-auto" alt="search">
+                    </button>
+                </form>
+            </div>
+
+            <ul class="h-[calc(100%-3rem-3vh-1.5rem-4.5vh)] text-sm overflow-auto *:mb-3">
+                <li class="border border-boulder-100 rounded-md p-[4%_3%]" th:if="${#lists.isEmpty(notices)}" th:text="#{mobile.notice.list.no.list}">게시물이 존재하지 않습니다.</li>
+
+                <li th:if="${!#lists.isEmpty(notices)}" th:each="notice : ${notices}" class="border border-boulder-100 rounded-md overflow-hidden">
+                    <div class="flex justify-between">
+                        <div class="grow p-[3%]">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-cornflower-blue-600 font-semibold" th:text="${#temporals.format(notice.noticeCreateDate, 'yyyy/MM/dd')}">registerDate</span>
+                                <span class="text-boulder-500 font-medium" th:text="${notice.adminId}">creator</span>
+                            </div>
+                            <h3 class="w-[75vw] font-medium whitespace-nowrap overflow-hidden text-ellipsis">
+                                <a th:href="@{/notice/detail/{id}
+                                                            (id            = ${notice.noticeId},
+                                                                page          = ${pagination.page},
+                                                                size          = 10,
+                                                                searchKeyword = ${param.searchKeyword})}"
+                                   th:text="${notice.noticeTitle}">title</a>
+                            </h3>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+            <div>
+                <ul id="pagination" class="flex justify-center items-center gap-1 h-[1.5rem] mt-[4vh] *:h-full">
+                    <li>
+                        <button type="button" th:onclick="|location.href='@{/notice(page          = ${pagination.startPage},
+                                                                                    size          = 10,
+                                                                                    searchKeyword = ${param.searchKeyword})}'|">
+                            <img src="/images/icon/first.svg" class="w-[1.5rem] h-auto" alt="First Page">
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn" th:onclick="|location.href='@{/notice(page          = ${pagination.prevPage},
+                                                                                                size          = 10,
+                                                                                                searchKeyword = ${param.searchKeyword})}'|">
+                            <img src="/images/icon/prev.svg" class="w-[1.5rem] h-auto" alt="Previous Page">
+                        </button>
+                    </li>
+                    <li th:each="pageNumber : ${#numbers.sequence(pagination.startPage, pagination.endPage)}" class="paging-btn w-[1.5rem] h-[1.5rem] rounded-[3px] flex justify-center items-center transition-all-3ms-ease">
+                        <a th:attr="class=${pageNumber == pagination.page ? 'active' : ''}" th:href="@{/notice(page          = ${pageNumber},
+                                                                                                               size          = 10,
+                                                                                                               searchKeyword = ${param.searchKeyword})}" th:text="${pageNumber}">1</a>
+                    </li>
+                    <li>
+                        <button type="button" class="btn" th:onclick="|location.href='@{/notice(page          = ${pagination.nextPage},
+                                                                                                size          = 10,
+                                                                                                searchKeyword = ${param.searchKeyword})}'|">
+                            <img src="/images/icon/next.svg" class="w-[1.5rem] h-auto" alt="Next Page">
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" th:onclick="|location.href='@{/notice(page          = ${pagination.endPage},
+                                                                                    size          = 10,
+                                                                                    searchKeyword = ${param.searchKeyword})}'|">
+                            <img src="/images/icon/last.svg" class="w-[1.5rem] h-auto" alt="Last Page">
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

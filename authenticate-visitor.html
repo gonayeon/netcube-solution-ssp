@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default-layout.html}"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title th:text="#{page.title.authenticate.visitor}">[NPass Self Serviced Portal] Authenticate Visitor Page</title>
+
+    <th:block layout:fragment="script">
+        <script th:inline="javascript">
+            const pageName = "AUTHENTICATE_VISITOR";
+            const otpMethod = [[${otpMethod}]];
+            const otpCodeValidTime = [[${otpCodeValidTime}]];
+            const maximumAuthenticateFailCount = [[${maximumAuthenticateFailCount}]];
+            const authenticateFailLockTimeSecond = [[${authenticateFailLockTimeSecond}]];
+            const authenticateFailLockTimeMinute = authenticateFailLockTimeSecond / 60;
+            const sectionId = (userAccessInfo.deviceType === deviceTypes.PC) ? '#pcSection' : '#mobileSection';
+        </script>
+
+        <script type="text/javascript" th:src="@{/js/authenticate/authenticate.js}"></script>
+    </th:block>
+</head>
+<body>
+    <main layout:fragment="content">
+        <!-- pc contents -->
+        <section class="hidden lg:block w-[95%] max-w-[1160px] mx-auto h-full" id="pcSection">
+            <div class="flex flex-col items-center justify-center h-full">
+                <div class="mb-[3.5vh] text-white text-center">
+                    <img src="/images/auth/npass-logo.png" class="w-[345px] mb-[4vh] mx-auto" alt="NPass">
+                    <h2 class="text-3xl font-extrabold mb-[2vh]" th:text="#{pc.authenticate.visitor.title}">방문자 로그인</h2>
+
+                    <th:block th:if="${otpMethod == 'EMAIL'}">
+                        <p class="text-sm" th:utext="#{pc.authenticate.visitor.message.email}"></p>
+                    </th:block>
+
+                    <th:block th:if="${otpMethod == 'SMS'}">
+                        <p class="text-sm" th:utext="#{pc.authenticate.visitor.message.mobile}"></p>
+                    </th:block>
+                </div>
+
+                <form id="authenticateForm">
+                    <input type="hidden" name="userType" value="VISITOR">
+
+                    <div class="*:grid *:grid-cols-[232px_128px] *:grid-rows-[40px] *:gap-2 *:mb-[2.2vh]">
+                        <div>
+                            <input autocomplete="off" name="username" type="text" th:placeholder="#{pc.authenticate.visitor.input.username.placeholder}" class="text-sm rounded-[3px] px-3 disabled:border disabled:border-cornflower-blue-500 disabled:bg-cornflower-blue-200 disabled:placeholder:text-black">
+                        </div>
+
+                        <div>
+                            <th:block th:if="${otpMethod == 'EMAIL'}">
+                                <input autocomplete="off" name="email" type="text" th:placeholder="#{pc.authenticate.visitor.input.email.placeholder}" class="text-sm rounded-[3px] px-3 disabled:border disabled:border-cornflower-blue-500 disabled:bg-cornflower-blue-200 disabled:placeholder:text-black">
+                            </th:block>
+
+                            <th:block th:if="${otpMethod == 'SMS'}">
+                                <input maxlength="13" oninput="onInputMobile(this);" autocomplete="off" name="mobile" type="text" th:placeholder="#{pc.authenticate.visitor.input.mobile.placeholder}" class="text-sm rounded-[3px] px-3 disabled:border disabled:border-cornflower-blue-500 disabled:bg-cornflower-blue-200 disabled:placeholder:text-black">
+                            </th:block>
+
+                            <button id="sendOtpCodeButton" type="button" onclick="sendOtpCode();" class="border border-black bg-black text-white text-sm rounded hover:bg-white hover:text-blue-ribbon-950 hover:border-blue-ribbon-800 transition-all-3ms-ease" th:text="#{pc.authenticate.visitor.button.sendOtp}">인증번호 전송</button>
+                        </div>
+
+                        <div id="otpCodeInputArea" class="!hidden">
+                            <label class="flex justify-between items-center bg-white px-3 rounded-[3px] border border-cornflower-blue-500">
+                                <input autocomplete="off" maxlength="6" type="text" name="password" th:placeholder="#{pc.authenticate.visitor.input.otp.placeholder}" class="text-sm w-[80%]">
+                                <span id="otpTimer" class="text-xs"></span>
+                            </label>
+
+                            <button onclick="authenticate();" type="button" class="border border-black bg-black text-white text-sm rounded hover:bg-white hover:text-blue-ribbon-950 hover:border-blue-ribbon-800 transition-all-3ms-ease" th:text="#{pc.authenticate.visitor.button.login}">확 인</button>
+                        </div>
+                    </div>
+
+                    <div class="text-center"><!--before:rounded-full before:bg-bright-red-800-->
+                        <span id="error-msg" class="text-sm text-bright-red-800 mx-auto before:w-[5px] before:h-[5px] before:inline-block before:align-middle before:mr-2"></span>
+                    </div>
+                </form>
+
+                <div class="flex items-start gap-2 mt-[3vh]">
+                    <img src="/images/auth/i-mark.svg" class="w-4 h-auto mt-[6px]" alt="i마크">
+
+                    <th:block th:if="${otpMethod == 'EMAIL'}">
+                        <p class="text-sm font-medium text-center leading-[3vh]" th:utext="#{pc.authenticate.visitor.guideMessage.email}"></p>
+                    </th:block>
+
+                    <th:block th:if="${otpMethod == 'SMS'}">
+                        <p class="text-sm font-medium text-center leading-[3vh]" th:utext="#{pc.authenticate.visitor.guideMessage.mobile}"></p>
+                    </th:block>
+                </div>
+            </div>
+        </section>
+
+        <!-- mobile contents -->
+        <section class="flex lg:hidden fixed left-1/2 z-10 -translate-x-1/2 flex-col justify-center w-[85%] h-[80%] text-center text-white" id="mobileSection">
+            <div>
+                <h1 class="mb-[3.7vh]">
+                    <img src="/images/auth/login-logo.svg" class="w-[60%] h-auto mx-auto md:w-[51%]" alt="NPass">
+                </h1>
+
+                <h2 class="text-[5vw] mb-[2vh] font-bold md:text-[3.7vw]" th:text="#{mobile.authenticate.visitor.title}">방문자 로그인</h2>
+
+                <th:block th:if="${otpMethod == 'EMAIL'}">
+                    <p class="text-[4vw] mb-[4.5vh] sm:text-xl md:text-2xl" th:utext="#{mobile.authenticate.visitor.message.email}"></p>
+                </th:block>
+                <th:block th:if="${otpMethod == 'SMS'}">
+                    <p class="text-[4vw] mb-[4.5vh] sm:text-xl md:text-2xl" th:utext="#{mobile.authenticate.visitor.message.mobile}"></p>
+                </th:block>
+
+                <p id="error-msg" class="text-apple-blossom-600 text-[4vw] mb-[4.5vh] md:text-[2.8vw]"></p>
+            </div>
+
+            <div class="w-full sm:w-[400px] md:w-[525px] mx-auto">
+                <form id="authenticateForm">
+                    <input type="hidden" name="userType" value="VISITOR">
+                    <div class="login visit *:grid *:grid-cols-[59%_36%] *:gap-[5%] *:h-[40px] *:mb-3 *:sm:h-[45px] *:sm:mb-[17px] *:md:h-[65px] *:md:mb-[28px]">
+                        <div>
+                            <input autocomplete="off" name="username" type="text" th:placeholder="#{mobile.authenticate.visitor.input.username.placeholder}" class="w-full rounded-[5px] text-sm text-black md:rounded-lg px-[10px] md:px-5 md:text-xl">
+                        </div>
+
+                        <div>
+                            <th:block th:if="${otpMethod == 'EMAIL'}">
+                                <input autocomplete="off" name="email" type="text" th:placeholder="#{mobile.authenticate.visitor.input.email.placeholder}" class="w-full rounded-[5px] text-sm text-black md:rounded-lg px-[10px] md:px-5 md:text-xl">
+                            </th:block>
+
+                            <th:block th:if="${otpMethod == 'SMS'}">
+                                <input maxlength="13" oninput="onInputMobile(this);" autocomplete="off" name="mobile" type="text" th:placeholder="#{mobile.authenticate.visitor.input.mobile.placeholder}" class="w-full rounded-[5px] text-sm text-black md:rounded-lg px-[10px] md:px-5 md:text-xl">
+                            </th:block>
+
+                            <button id="sendOtpCodeButton" type="button" onclick="sendOtpCode();" class="bg-persian-blue-900 rounded-[5px] text-pretty text-sm md:rounded-lg md:text-xl" th:text="#{mobile.authenticate.visitor.button.sendOtp}">인증번호 발송</button>
+                        </div>
+
+                        <div id="otpCodeInputArea" class="!hidden">
+                            <label class="flex justify-between items-center bg-white w-full rounded-[5px] px-[10px] md:px-5">
+                                <input maxlength="6" autocomplete="off" name="password" type="text" th:placeholder="#{mobile.authenticate.visitor.input.otp.placeholder}" class="w-[77%] text-black text-sm md:text-xl">
+                                <span id="otpTimer" class="text-black text-xs md:text-lg"></span>
+                            </label>
+                            <button onclick="authenticate();" type="button" class="bg-black rounded-[5px] text-sm md:rounded-lg md:text-xl" th:text="#{mobile.authenticate.visitor.button.login}">확인</button>
+                        </div>
+                    </div>
+                </form>
+                <p class="mt-[5vh] bg-[rgba(255,255,255,0.3)] px-[19px] py-[10px] rounded-[5px] md:px-8 md:py-6 md:rounded-lg text-[3.8vw] sm:text-[16px] md:text-xl">
+                    <img src="/images/auth/info.svg" class="inline-block mr-1 pb-[3px] h-4 w-auto align-middle md:h-5" alt="information">
+                    <span th:text="#{mobile.authenticate.visitor.guideMessage}">무선 네트워크는 신청된 방문자만 사용 가능합니다.</span>
+                </p>
+            </div>
+        </section>
+
+        <!-- pc background -->
+        <div class="hidden lg:block fixed top-0 left-0 -z-10 w-full h-full">
+            <img src="/images/auth/background-circle-2.svg" alt="background circle" class="absolute top-[-28%] left-[3%]">
+            <img src="/images/auth/background-circle-3.svg" alt="background circle" class="absolute bottom-[-11%] right-[7%]">
+            <img src="/images/auth/background-circle-4.svg" alt="background circle" class="absolute top-[-5%] right-[11%]">
+            <img src="/images/auth/background-circle-1.svg" alt="background circle" class="absolute top-[49%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-auto h-3/4">
+        </div>
+
+        <!-- mobile background -->
+        <div class="block lg:hidden fixed top-0 left-0 w-full h-full bg-cornflower-blue-400">
+            <img src="/images/auth/m-bg-circle-stripe-white-90.svg" alt="background circle" class="absolute top-[13%] left-[8%] w-[30%]">
+            <img src="/images/auth/m-bg-circle-stripe-white.svg" alt="background circle" class="absolute top-[7%] left-[2%] w-[20%]">
+            <img src="/images/auth/m-bg-circle-stripe-grey.svg" alt="background circle" class="absolute top-[-5%] right-[-6%] w-[39%]">
+            <img src="/images/auth/m-bg-circle-stripe-white-oblique.svg" alt="background circle" class="absolute bottom-[-7%] right-[-30%] w-[83%]">
+            <img src="/images/auth/m-bg-circle-grey.svg" alt="background circle" class="absolute top-[30%] right-[15%] w-[25%]">
+            <img src="/images/auth/m-bg-circle-grey.svg" alt="background circle" class="absolute bottom-[-10%] left-[-13%] w-[42%]">
+        </div>
+    </main>
+</body>
+</html>

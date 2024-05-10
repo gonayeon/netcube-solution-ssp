@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default-layout.html}"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title th:text="#{page.title.faq.list}">[NPass Self Serviced Portal] FAQ List Page</title>
+
+    <th:block layout:fragment="script">
+        <script th:inline="javascript">
+            const pageName = "FAQ_LIST";
+        </script>
+    </th:block>
+</head>
+<body>
+    <main layout:fragment="content">
+        <!-- pc contents -->
+        <div class="hidden lg:block w-[95%] max-w-[1160px] mx-auto pt-[4.5vh] overflow-auto">
+            <div class="flex h-[45px] mb-[1vh]">
+                <h3 class="text-3xl font-bold flex items-center mr-12">
+                    <span class="w-[9px] h-[9px] bg-black rounded-full mr-[15px]"></span>
+                    <span th:text="#{pc.faq.list.title}">자주하는 질문</span>
+                </h3>
+                <ul class="grow h-1/2 border-b border-waterloo-600 flex justify-end items-center text-xs text-waterloo-600 *:px-1">
+                    <li><a href="/" th:text="#{pc.common.path.root}">HOME</a></li>
+                    <li>&#62;</li>
+                    <li><a href="/faq" th:text="#{pc.common.path.faq}">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="h-[38px] text-[14px] flex justify-end gap-5 mb-[3vh]">
+                <form th:action="@{/faq}" th:method="get" class="border border-portage-500 rounded-[3px]">
+                    <input type="hidden" name="page" th:value="1">
+                    <input type="hidden" name="size" th:value="10">
+                    <input type="hidden" name="searchKeyword" th:value="${param.searchKeyword}">
+
+                    <select name="faqCategoryId" class="min-w-[120px] h-full pl-3 pr-7 bg-transparent" style="background: url(/images/main/selectSkyblueTriangle.png) no-repeat center right 12px/16px;" onchange="this.form.submit()">
+                        <option th:value="${currentCategory.faqCategoryId}" th:text="${currentCategory.faqCategoryName}"></option>
+                        <option value="">TOTAL</option>
+                        <option th:each="code : ${faqCategoryCodes}"
+                                th:value="${code.faqCategoryId}"
+                                th:utext="${code.faqCategoryName}"></option>
+                    </select>
+                </form>
+
+                <form th:action="@{/faq}" th:method="get" class="border border-portage-500 w-[360px] h-full rounded-[3px] flex has-[input:focus]:shadow-[2px_2px_4px_rgba(0,0,0,0.25)] transition-all-3ms-ease">
+                    <input type="hidden" name="page" th:value="1">
+                    <input type="hidden" name="size" th:value="10">
+                    <input type="hidden" name="faqCategoryId" th:value="${param.faqCategoryId}">
+                    <input type="text" name="searchKeyword" th:value="${param.searchKeyword}" th:placeholder="#{pc.faq.list.search.input.placeholder}" autocomplete="off" class="searchBar grow px-[10px] bg-transparent">
+                    <button type="submit" id="searchBtn" class="bg-portage-500 w-[38px] flex justify-center items-center">
+                        <img src="/images/icon/search.svg" alt="search">
+                    </button>
+                </form>
+            </div>
+
+            <div class="flex flex-col justify-between min-h-[560px] rounded-[5px_5px_0_0] overflow-hidden">
+                <table class="w-full text-center table-fixed *:*:h-[50px]">
+                    <thead class="bg-blue-ribbon-950 text-sm font-semibold text-white">
+                        <tr class="*:after:content-['|'] *:after:font-normal *:after:float-right">
+                            <th scope="col" class="w-[7%]" th:text="#{pc.faq.list.tableHeader.no}">번호</th>
+                            <th scope="col" class="w-[17%]" th:text="#{pc.faq.list.tableHeader.category}">구분</th>
+                            <th scope="col" class="w-[36%]" th:text="#{pc.faq.list.tableHeader.title}">제목</th>
+                            <th scope="col" class="w-[20%]" th:text="#{pc.faq.list.tableHeader.registerDate}">작성일</th>
+                            <th scope="col" class="w-[20%] last:after:content-none" th:text="#{pc.faq.list.tableHeader.adminId}">작성자</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="text-xs px-1 tracking-[0.095em] *:border-b *:border-mischka-300">
+                        <tr th:if="${#lists.isEmpty(faqs)}">
+                            <td colspan="5" th:text="#{pc.faq.list.no.list}">게시물이 존재하지 않습니다.</td>
+                        </tr>
+
+                        <tr th:if="${!#lists.isEmpty(faqs)}" th:each="faq : ${faqs}" class="hover:bg-[#e5ebff] transition-all-3ms-ease odd:bg-boulder-50 *:px-[1%] *:overflow-hidden *:whitespace-nowrap *:text-ellipsis">
+                            <td th:text="${faq.faqId}">번호</td>
+                            <td th:text="${faq.faqCategoryName}">카테고리</td>
+                            <td th:id="faqId_ +${faq.faqId}">
+                                <a th:href="@{/faq/detail/{id}
+                                                        (id            = ${faq.faqId},
+                                                         page          = ${pagination.page},
+                                                         size          = 10,
+                                                         searchKeyword = ${param.searchKeyword},
+                                                         faqCategory   = ${param.faqCategoryId})}"
+                                    th:text="${faq.faqTitle}">제목</a>
+                            </td>
+                            <td th:text="${#temporals.format(faq.faqCreateDate, 'yyyy/MM/dd')}">작성일</td>
+                            <td th:text="${faq.adminId}">작성자</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <ul id="pagination" class="flex justify-center items-center gap-1 h-[21px] mt-[4.5vh] *:h-full">
+                    <li>
+                        <button type="button" th:onclick="|location.href='@{/faq(page          = ${pagination.startPage},
+                                                                                 size          = 10,
+                                                                                 searchKeyword = ${param.searchKeyword},
+                                                                                 faqCategoryId = ${param.faqCategoryId})}'|">
+                            <img src="/images/icon/first.svg" class="w-[21px] h-auto" alt="First Page">
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn" th:onclick="|location.href='@{/faq(page          = ${pagination.prevPage},
+                                                                                                size          = 10,
+                                                                                                searchKeyword = ${param.searchKeyword},
+                                                                                                faqCategoryId = ${param.faqCategoryId})}'|">
+                            <img src="/images/icon/prev.svg" class="w-[21px] h-auto" alt="Previous Page">
+                        </button>
+                    </li>
+
+                    <li th:each="pageNumber : ${#numbers.sequence(pagination.startPage, pagination.endPage)}" class="paging-btn w-[21px] h-[21px] rounded-[3px] flex justify-center items-center transition-all-3ms-ease *:pt-[1px]">
+                        <a th:attr="class=${pageNumber == pagination.page ? 'active' : ''}" th:href="@{/faq(page          = ${pageNumber},
+                                                                                                            size          = 10,
+                                                                                                            searchKeyword = ${param.searchKeyword},
+                                                                                                            faqCategoryId = ${param.faqCategoryId})}" th:text="${pageNumber}">1</a>
+                    </li>
+
+                    <li>
+                        <button type="button" class="btn" th:onclick="|location.href='@{/faq(page          = ${pagination.nextPage},
+                                                                                                size          = 10,
+                                                                                                searchKeyword = ${param.searchKeyword},
+                                                                                                faqCategoryId = ${param.faqCategoryId})}'|">
+                            <img src="/images/icon/next.svg" class="w-[21px] h-auto" alt="Next Page">
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" th:onclick="|location.href='@{/faq(page          = ${pagination.endPage},
+                                                                                 size          = 10,
+                                                                                 searchKeyword = ${param.searchKeyword},
+                                                                                 faqCategoryId = ${param.faqCategoryId})}'|">
+                            <img src="/images/icon/last.svg" class="w-[21px] h-auto" alt="Last Page">
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- mobile contents -->
+        <div class="block lg:hidden h-full p-[3vh_4%]">
+            <div class="border border-boulder-300 rounded-lg h-12 px-4 mb-[2vh] transition-all-3ms-ease focus-within:border-2 focus-within:border-blue-ribbon-500 focus-within:shadow-[4px_4px_8px_rgba(0,0,0,0.1)]">
+                <form th:action="@{/faq}" th:method="get" class="w-full h-full flex justify-between items-center">
+                    <input type="hidden" name="page" th:value="1">
+                    <input type="hidden" name="size" th:value="10">
+                    <input type="hidden" name="faqCategoryId" th:value="${param.faqCategoryId}">
+                    <input name="searchKeyword" th:value="${param.searchKeyword}" id="searchBar" type="text" class="w-[90%]" th:placeholder="#{mobile.faq.list.search.input.placeholder}" autocomplete="off">
+                    <button type="submit" class="h-[55%]">
+                        <img src="/images/icon/search-grey.svg" class="h-full w-auto" alt="search">
+                    </button>
+                </form>
+            </div>
+
+
+            <div class="border border-boulder-300 rounded-lg h-12 mb-6 text-base transition-all-3ms-ease focus-within:border-2 focus-within:border-blue-ribbon-500 focus-within:shadow-[4px_4px_8px_rgba(0,0,0,0.1)]">
+                <form th:action="@{/faq}" th:method="get" class="w-full h-full">
+                    <input type="hidden" name="page" th:value="1">
+                    <input type="hidden" name="size" th:value="10">
+                    <input type="hidden" name="searchKeyword" th:value="${param.searchKeyword}">
+
+                    <select name="faqCategoryId" class="w-full h-full pl-4 pr-10" style="background: url(/images/icon/arrow-down-grey.svg) no-repeat center right 12px/16px;" onchange="this.form.submit()">
+                        <option th:value="${currentCategory.faqCategoryId}" th:text="${currentCategory.faqCategoryName}"></option>
+                        <option value="">TOTAL</option>
+                        <option th:each="code : ${faqCategoryCodes}"
+                                th:value="${code.faqCategoryId}"
+                                th:utext="${code.faqCategoryName}"></option>
+                    </select>
+                </form>
+            </div>
+
+            <ul class="text-sm h-[calc(100%-3rem-2vh-3rem-1.5rem-4vh-1.5rem)] overflow-auto">
+                <li class="border border-boulder-100 rounded-md p-[4%_3%]" th:if="${#lists.isEmpty(faqs)}" th:text="#{mobile.faq.list.no.list}">게시물이 존재하지 않습니다.</li>
+
+                <li class="border border-boulder-100 rounded-md overflow-hidden mb-3" th:if="${!#lists.isEmpty(faqs)}" th:each="faq : ${faqs}">
+                    <div class="flex justify-between">
+                        <div class="grow p-[3%]">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-cornflower-blue-600 font-semibold" th:text="${faq.faqCategoryName}">category</span>
+                                <span class="text-boulder-500" th:text="${#temporals.format(faq.faqCreateDate, 'yyyy/MM/dd')}">registerDate</span>
+                            </div>
+                            <h3 class="w-[75vw] font-medium whitespace-nowrap overflow-hidden text-ellipsis">
+                                <a th:href="@{/faq/detail/{id}
+                                                        (id            = ${faq.faqId},
+                                                            page          = ${pagination.page},
+                                                            size          = 10,
+                                                            searchKeyword = ${param.searchKeyword},
+                                                            faqCategory   = ${param.faqCategoryId})}"
+                                   th:text="${faq.faqTitle}">title</a>
+                            </h3>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+            <div>
+                <ul id="pagination" class="flex justify-center items-center gap-1 h-[1.5rem] mt-[4vh] *:h-full">
+                    <li>
+                        <button type="button" th:onclick="|location.href='@{/faq(page          = ${pagination.startPage},
+                                                                                 size          = 10,
+                                                                                 searchKeyword = ${param.searchKeyword},
+                                                                                 faqCategoryId = ${param.faqCategoryId})}'|">
+                            <img src="/images/icon/first.svg" class="w-[1.5rem] h-auto" alt="First Page">
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" class="btn" th:onclick="|location.href='@{/faq(page          = ${pagination.prevPage},
+                                                                                                size          = 10,
+                                                                                                searchKeyword = ${param.searchKeyword},
+                                                                                                faqCategoryId = ${param.faqCategoryId})}'|">
+                            <img src="/images/icon/prev.svg" class="w-[1.5rem] h-auto" alt="Previous Page">
+                        </button>
+                    </li>
+                    <li th:each="pageNumber : ${#numbers.sequence(pagination.startPage, pagination.endPage)}" class="paging-btn w-[1.5rem] h-[1.5rem] rounded-[3px] flex justify-center items-center transition-all-3ms-ease">
+                        <a th:attr="class=${pageNumber == pagination.page ? 'active' : ''}" th:href="@{/faq(page          = ${pageNumber},
+                                                                                                            size          = 10,
+                                                                                                            searchKeyword = ${param.searchKeyword},
+                                                                                                            faqCategoryId = ${param.faqCategoryId})}" th:text="${pageNumber}">1</a>
+                    </li>
+                    <li>
+                        <button type="button" class="btn" th:onclick="|location.href='@{/faq(page          = ${pagination.nextPage},
+                                                                                                size          = 10,
+                                                                                                searchKeyword = ${param.searchKeyword},
+                                                                                                faqCategoryId = ${param.faqCategoryId})}'|">
+                            <img src="/images/icon/next.svg" class="w-[1.5rem] h-auto" alt="Next Page">
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" th:onclick="|location.href='@{/faq(page          = ${pagination.endPage},
+                                                                                 size          = 10,
+                                                                                 searchKeyword = ${param.searchKeyword},
+                                                                                 faqCategoryId = ${param.faqCategoryId})}'|">
+                            <img src="/images/icon/last.svg" class="w-[1.5rem] h-auto" alt="Last Page">
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

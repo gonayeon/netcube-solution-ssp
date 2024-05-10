@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org " xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<header th:fragment="headerFragment" id="pc-header" class="fixed top-0 left-0 w-full h-[8.9vh] lg:h-20 bg-cornflower-blue-600 lg:bg-blue-ribbon-950">
+    <!-- pc header -->
+    <div class="hidden w-[95%] max-w-[1160px] mx-auto h-full lg:flex justify-between items-center">
+        <h1 class="mr-24">
+            <a href="/"><img src="/images/main/mainLogo.svg" class="w-32 h-auto" alt="NPass"></a>
+        </h1>
+
+        <nav class="grow">
+            <ul class="flex gap-24">
+                <li sec:authorize="isAuthenticated()">
+                    <a class="nav-item group relative text-[22px] font-bold text-white" href="/user-device">
+                        <div class="group-hover:block hidden absolute top-0 -right-3 w-2 h-2 bg-white rounded-full"></div>
+                        <span th:text="#{pc.common.header.nav.userDevice}">Device</span>
+                    </a>
+                    <div class="menu-explain hidden absolute top-20 left-0 w-full h-[233px]" style="background: url(/images/banner/device-banner.png) no-repeat center/cover;">
+                        <div class="w-[95%] max-w-[1160px] mx-auto mt-[68px] text-white pl-56">
+                            <h2 class="text-[40px] tracking-[0.095em] font-bold" th:text="#{pc.common.header.banner.title.userDevice}">사용자 단말 관리</h2>
+                            <p class="text-sm mt-2" th:text="#{pc.common.header.banner.message.userDevice}">등록된 단말을 관리 하실 수 있습니다.</p>
+                        </div>
+                    </div>
+                </li>
+
+                <li>
+                    <a class="nav-item group relative text-[22px] font-bold text-white" href="/faq">
+                        <div class="group-hover:block hidden absolute top-0 -right-3 w-2 h-2 bg-white rounded-full"></div>
+                        <span th:text="#{pc.common.header.nav.faq}">FAQ</span>
+                    </a>
+                    <div class="menu-explain hidden absolute top-20 left-0 w-full h-[233px]" style="background: url(/images/banner/faq-banner.svg) no-repeat center/cover;">
+                        <div class="w-[95%] max-w-[1160px] mx-auto mt-[68px] text-white pl-56">
+                            <h2 class="text-[40px] tracking-[0.095em] font-bold" th:text="#{pc.common.header.banner.title.faq}">자주하는 질문</h2>
+                            <p class="text-sm mt-2" th:text="#{pc.common.header.banner.message.faq}">자주하는 질문을 확인해보세요.</p>
+                        </div>
+                    </div>
+                </li>
+
+                <li>
+                    <a class="nav-item group relative text-[22px] font-bold text-white" href="/notice">
+                        <div class="group-hover:block hidden absolute top-0 -right-3 w-2 h-2 bg-white rounded-full"></div>
+                        <span th:text="#{pc.common.header.nav.notice}">Notice</span>
+                    </a>
+                    <div class="menu-explain hidden absolute top-20 left-0 w-full h-[233px]" style="background: url(/images/banner/notice-banner.svg) no-repeat center/cover;">
+                        <div class="w-[95%] max-w-[1160px] mx-auto mt-[68px] text-white pl-56">
+                            <h2 class="text-[40px] tracking-[0.095em] font-bold" th:text="#{pc.common.header.banner.title.notice}">공지사항</h2>
+                            <p class="text-sm mt-2" th:text="#{pc.common.header.banner.message.notice}">새로운 공지사항을 알려드립니다.</p>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+
+        <form class="flex items-center gap-3 text-white text-sm">
+            <button type="button" class="logout-btn border-b border-white hover:border-portage-400 hover:text-portage-400 transition-all-3ms-ease" sec:authorize="isAuthenticated()">
+                <a href="/logout" th:text="#{pc.common.header.logout}">로그아웃</a>
+            </button>
+
+            <button type="button" class="manualBtn hover:text-portage-400 transition-all-3ms-ease ml-3" th:text="#{pc.common.header.manual}">매뉴얼</button>
+
+            <select class="w-24 pl-3 pr-7 bg-transparent *:text-black" style="background: url(/images/main/selectWhiteTriangle.png) no-repeat top 3px right 8px/16px" onchange="if(this.value) location.href=(this.value);">
+                <option value="?lang=ko" th:selected="${#locale.language == 'ko'}" th:text="#{pc.common.header.language.select.ko}">한국어</option>
+                <option value="?lang=en" th:selected="${#locale.language == 'en'}" th:text="#{pc.common.header.language.select.en}">English</option>
+            </select>
+        </form>
+    </div>
+
+    <!-- mobile header -->
+    <div class="lg:hidden h-full flex items-center relative" id="mobileHeader">
+        <button id="hamburger-button" type="button" class="h-[41.6%] mx-[4%] ">
+            <img src="/images/main/hamburger-button.svg" class="w-auto h-full" alt="go to menu">
+        </button>
+        <h1 class="top-logo absolute top-1/2 left-[52%] -translate-x-1/2 -translate-y-1/2 text-[1.6rem] text-white font-bold text-nowrap" th:text="${mobileHeaderTitle}"></h1>
+    </div>
+    
+    <!-- mobile side -->
+    <div id="sideMenuWrap" class="block lg:hidden fixed top-0 -left-full w-full h-screen z-10">
+        <aside id="sideMenu" class="fixed top-0 -left-full z-10 flex flex-col justify-between w-[51%] min-w-52 max-w-[450px] h-full bg-white rounded-tr-3xl 
+        rounded-br-3xl shadow-[1px_2px_4px_0_rgba(0,0,0,0.25)] overflow-hidden">
+            <div class="h-[9%] min-h-[60px] px-[10%] border-b border-[#c1c7dc] flex items-center">
+                <h2 class="h-1/2">
+                    <a href="/"><img src="/images/main/sidebar-logo.svg" class="w-auto h-full" alt="NPass"></a>
+                </h2>
+            </div>
+
+            <div class="flex justify-center items-center h-[12.7vh] min-h-20">
+                <form class="border border-cornflower-blue-300 flex justify-center items-center w-[90%] rounded-lg md:rounded-2xl overflow-hidden">
+                    <label class="flex justify-center items-center w-1/2 text-boulder-500 text-[4vw] font-bold bg-white py-[0.5vh] transition-all duration-150">
+                        <input type="radio" name="language" value="?lang=ko" class="appearance-none group-checked:bg-slate-300" th:checked="${#locale.language == 'ko'}" onchange="if(this.value) location.href=(this.value);">
+                        <span th:text="#{mobile.common.sideBar.language.select.ko}">KOR</span>
+                    </label>
+                    <label class="flex justify-center items-center w-1/2 text-boulder-500 text-[4vw] font-bold bg-white py-[0.5vh] transition-all duration-150">
+                        <input type="radio" name="language" value="?lang=en" class="appearance-none" th:checked="${#locale.language == 'en'}" onchange="if(this.value) location.href=(this.value);">
+                        <span th:text="#{mobile.common.sideBar.language.select.en}">ENG</span>
+                    </label>
+                </form>
+            </div>
+
+            <ul class="grow *:mb-[2vh]">
+                <li sec:authorize="isAuthenticated()">
+                    <a class="block pl-[10%] pr-[9%] py-1 w-[90%] rounded-r-full text-2xl font-semibold hover:text-right hover:bg-black hover:text-white" href="/user-device" th:text="#{mobile.common.sideBar.menu.userDevice}">Device</a>
+                </li>
+                <li>
+                    <a class="block pl-[10%] pr-[9%] py-1 w-[90%] rounded-r-full text-2xl font-semibold hover:text-right hover:bg-black hover:text-white" href="/faq" th:text="#{mobile.common.sideBar.menu.faq}">FAQ</a>
+                </li>
+                <li>
+                    <a class="block pl-[10%] pr-[9%] py-1 w-[90%] rounded-r-full text-2xl font-semibold hover:text-right hover:bg-black hover:text-white" href="/notice" th:text="#{mobile.common.sideBar.menu.notice}">NOTICE</a>
+                </li>
+            </ul>
+
+            <div class="border-t border-[#c1c7dc] flex justify-end items-center h-[9vh]">
+                <button type="button" class="w-fit h-full">
+                    <img src="/images/headerFooter/manual-btn.png" class="w-auto h-full" alt="go to manual">
+                </button>
+
+                <button type="button" class="w-fit h-full" onclick="location.href='/logout'" sec:authorize="isAuthenticated()">
+                    <img src="/images/headerFooter/logout-btn.png" class="w-auto h-full" alt="logout">
+                </button>
+            </div>
+        </aside>
+    </div>
+</header>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default-layout.html}"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title th:text="#{page.title.faq.detail}">[NPass Self Serviced Portal] FAQ Detail Page</title>
+    <th:block layout:fragment="script">
+        <script>
+            const pageName = "FAQ_DETAIL";
+        </script>
+    </th:block>
+</head>
+<body>
+    <main layout:fragment="content" class="h-screen pt-[8.9vh] lg:pt-20 lg:pb-[100px] md:min-h-[705px] overflow-auto">
+        <!-- pc contents -->
+        <div class="hidden lg:block w-[95%] max-w-[1160px] mx-auto pt-[4.5vh] overflow-auto">
+            <div class="flex h-[45px] mb-[1vh]">
+                <h3 class="text-3xl font-bold flex items-center mr-12">
+                    <span class="w-[9px] h-[9px] bg-black rounded-full mr-[15px]"></span>
+                    <span th:text="#{pc.faq.detail.title}">자주하는 질문</span>
+                </h3>
+                <ul class="grow h-1/2 border-b border-waterloo-600 flex justify-end items-center text-xs text-waterloo-600 *:px-1">
+                    <li><a href="/" th:text="#{pc.common.path.root}">HOME</a></li>
+                    <li>&#62;</li>
+                    <li><a href="/faq" th:text="#{pc.common.path.faq}">FAQ</a></li>
+                </ul>
+            </div>
+
+            <div class="noticelist-selected">
+                <div class="border border-blue-ribbon-950 rounded-[3px_3px_0_0] flex h-[50px] mt-[5vh] mb-[3vh]">
+                    <div class="flex items-center w-3/5 h-full">
+                        <h4 class="flex justify-center items-center w-[90px] h-full bg-blue-ribbon-950 text-sm text-white font-bold" th:text="#{pc.faq.detail.body.title}">제목</h4>
+                        <p th:utext="${faq.faqTitle}" class="w-[86%] px-[15px] text-blue-ribbon-950 font-bold whitespace-nowrap overflow-hidden text-ellipsis"></p>
+                    </div>
+                    <div class="flex items-center w-2/5 h-full">
+                        <h4 class="flex justify-center items-center w-[90px] h-full bg-blue-ribbon-950 text-sm text-white font-bold" th:text="#{pc.faq.detail.body.category}">구분</h4>
+                        <p th:utext="${faq.faqCategoryName}" class="w-4/5 px-[15px] text-blue-ribbon-950 font-bold whitespace-nowrap overflow-hidden text-ellipsis"></p>
+                    </div>
+                </div>
+
+                <div class="selected-contents border border-blue-ribbon-950 rounded-[3px] p-5 mb-[3vh]">
+                    <h5 th:utext="${faq.faqTitle}" class="mb-[10px] text-blue-ribbon-950 font-bold"></h5>
+                    <textarea th:utext="${faq.faqContent}" rows="2" class="resize-none outline-none w-full leading-loose"></textarea>
+                </div>
+                <div class="reply bg-blue-ribbon-50 rounded-[3px] p-5 mb-[3vh]">
+                    <h5 class="mb-[10px] text-blue-ribbon-950 font-bold" th:text="#{pc.faq.detail.body.reply}">답변</h5>
+                    <textarea th:utext="${faq.faqReply}" rows="6" class="bg-transparent outline-none resize-none w-full leading-loose"></textarea>
+                </div>
+            </div>
+
+            <div class="flex justify-center">
+                <button type="button" class="w-[93px] h-[38px] rounded-[3px] flex justify-center items-center bg-blue-ribbon-950 text-sm font-bold text-white transition-all-3ms-ease hover:border hover:border-blue-ribbon-950 hover:bg-white hover:text-blue-ribbon-950" 
+                                                            th:onclick="|location.href='@{/faq(page           = ${param.page},
+                                                                                                size          = ${param.size},
+                                                                                                searchKeyword = ${param.searchKeyword},
+                                                                                                faqCategoryId = ${param.faqCategoryId})}'|" th:text="#{pc.faq.detail.body.button}">목록</button>
+            </div>
+        </div>
+        <!-- mobile contents -->
+        <div class="block lg:hidden h-full">
+            <div class="h-[calc(100%-8vh)] p-[5vh_4%] overflow-auto">
+                <div class="flex justify-between mb-7">
+                    <h4 class="flex items-center h-14 text-xl font-bold" th:text="#{mobile.faq.detail.body.title}">제목</h4>
+                    <p th:text="${faq.faqTitle}" class="border border-boulder-400 rounded-[0.1875rem] w-[72vw] min-h-14 p-[0.8rem] text-gunsmoke-500 text-lg"></p>
+                </div>
+                <div class="flex justify-between mb-7">
+                    <h4 class="flex items-center h-14 text-xl font-bold" th:text="#{mobile.faq.detail.body.category}">구분</h4>
+                    <p th:text="${faq.faqCategoryName}" class="border border-boulder-400 rounded-[0.1875rem] w-[72vw] min-h-14 p-[0.8rem] text-gunsmoke-500 text-lg"></p>
+                </div>
+                <div class="flex justify-between mb-7">
+                    <h5 class="flex items-center h-14 text-xl font-bold" th:text="#{mobile.faq.detail.body.question}">질문</h5>
+                    <p th:utext="${faq.faqContent}" class="border border-boulder-400 rounded-[0.1875rem] w-[72vw] min-h-72 p-[0.8rem] text-gunsmoke-500 text-lg leading-relaxed text-wrap"></p>
+                </div>
+                <div class="flex justify-between">
+                    <h5 class="flex items-center h-14 text-xl font-bold" th:text="#{mobile.faq.detail.body.reply}">답변</h5>
+                    <p th:utext="${faq.faqReply}" class="border border-boulder-400 rounded-[0.1875rem] w-[72vw] min-h-72 p-[0.8rem] text-gunsmoke-500 text-lg leading-relaxed text-wrap"></p>
+                </div>
+            </div>
+            <button type="button" class="w-full h-[8vh] bg-cornflower-blue-700 text-xl font-bold text-white" 
+                                                        th:onclick="|location.href='@{/faq(page           = ${param.page},
+                                                                                            size          = ${param.size},
+                                                                                            searchKeyword = ${param.searchKeyword},
+                                                                                            faqCategoryId = ${param.faqCategoryId})}'|" th:text="#{mobile.faq.detail.body.button}">목록</button>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lagn="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head th:fragment="configFragment">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--pc common CSS-->
+    <link rel="stylesheet" href="/css/pc/common/modal.css">
+    <style type="text/tailwindcss">
+        @font-face {
+            font-family: 'Poppins';
+            font-weight: 300;
+            font-display: swap;
+            src: url(/font/Poppins/Poppins-Light.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Poppins';
+            font-weight: 400;
+            font-display: swap;
+            src: url(/font/Poppins/Poppins-Regular.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Poppins';
+            font-weight: 500;
+            font-display: swap;
+            src: url(/font/Poppins/Poppins-Medium.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Poppins';
+            font-weight: 600;
+            font-display: swap;
+            src: url(/font/Poppins/Poppins-SemiBold.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Poppins';
+            font-weight: 700;
+            font-display: swap;
+            src: url(/font/Poppins/Poppins-Bold.ttf) format('truetype');
+        }
+        @layer base {
+            html, body {
+                @apply font-poppins text-[13px] sm:text-[16px] md:text-[20px] lg:text-[16px];
+            }
+            select {
+                @apply outline-none appearance-none border-none;
+            }
+            input {
+                @apply outline-none appearance-none;
+            }
+            ::-webkit-scrollbar{
+                @apply hidden;
+            }
+        }
+        @layer components {
+            .transition-all-3ms-ease {
+                @apply transition-all duration-300 ease-in-out;
+            }
+            #sideMenu label:has(input[type="radio"]:checked) {
+                @apply text-black bg-cornflower-blue-300;
+            }
+            .paging-btn:has(> a.active) {
+                @apply bg-blue-ribbon-950 text-white;
+            }
+        }
+    </style>
+
+    <!--pc common JS-->
+    <script src="/js/library/jquery-3.5.1.min.js"></script>
+    <script src="/js/library/tw3.4.1.js"></script>
+    <script src="/js/common/tailwind.config.js"></script>
+
+    <script src="/js/utils/domUtils.js"></script>
+    <script src="/js/utils/apiUtil.js"></script>
+    <!--<script src="/js/pc/common/modal.js"></script>
+    <script src="/js/pc/common/header.js"></script>-->
+
+    <script src="/js/device/windowsProfilerFunction.js"></script>
+    <script src="/js/device/androidApkFunction.js"></script>
+    <script src="/js/userAgent/browser.js"></script>
+    <script src="/js/userAgent/os.js"></script>
+    <script src="/js/userAgent/userAccessDevice.js"></script>
+    <script src="/js/userAgent/userAccessInformation.js"></script>
+    <script src="/js/utils/userAgentUtils.js"></script>
+    <script src="/js/utils/commonUtils.js"></script>
+
+    <script th:inline="javascript">
+        const isDevelopMode = [[${isDevelopMode}]];
+        const ipaIsUsed = [[${ipaIsUsed}]];
+        const userAccessInfo = [[${session.userAccessInformation}]];
+        const callingStationId = [[${session.CALLING_STATION_ID}]];
+
+        /* message */
+        const javaScriptAuthenticateMessage = {
+            'VALIDATION_OTP_CODE' : [[#{javascript.message.authenticate.otp.validation}]],
+            'ACCOUNT_LOCK_STATUS' : [[#{javascript.message.authenticate.account.lock}]],
+            'NOT_VALID_OTP_CODE' : [[#{javascript.message.authenticate.not.valid.otp}]],
+            'OTP_SEND_ERROR' : [[#{javascript.message.authenticate.otp.send.error}]],
+            'FAIL_DEFAULT' : [[#{javascript.message.authenticate.fail.default}]],
+            'FAIL_MAX_COUNT' : [[#{javascript.message.authenticate.fail.maxCount}]],
+            'NOT_REGISTER_VISITOR' : [[#{javascript.message.authenticate.not.register.visitor}]],
+            'NOT_VALID_EMAIL_FORM' : [[#{javascript.message.authenticate.not.valid.emailForm}]],
+        };
+
+        const javaScriptUserDeviceMessage = {
+            'NO_LIST_DEVICE' : [[#{javascript.message.userDevice.no.list}]],
+            'NO_INPUT_DEVICE_NICKNAME' : [[#{javascript.message.userDevice.no.input.nickname}]],
+            "REGISTER_OK_ALREADY_REGISTER_DEVICE_MY_ACCOUNT" : [[#{javascript.message.userDevice.add.sameMac.myAccount}]],
+            "REGISTER_OK_ALREADY_REGISTER_DEVICE_OTHER_ACCOUNT" : [[#{javascript.message.userDevice.add.sameMac.otherAccount}]],
+            "REGISTER_OK_NO_REGISTER_DEVICE" : [[#{javascript.message.userDevice.confirm.add}]],
+            "REGISTER_NO" : [[#{javascript.message.userDevice.add.not.available}]],
+            "DELETE_DEVICE_CONFIRM" : [[#{javascript.message.userDevice.confirm.delete}]],
+            "REPLACE_DEVICE_CONFIRM" : [[#{javascript.message.userDevice.confirm.replace}]],
+            "ERROR_FAIL_AAA_DELETE_USER_DEVICE" : [[#{javascript.message.userDevice.error.delete.aaa}]],
+            "ERROR_NOT_FOUND_LICENSE_INFO" : [[#{javascript.message.userDevice.error.license.not.found.info}]],
+            "ERROR_LICENSE_DEFAULT" : [[#{javascript.message.userDevice.error.license.default}]],
+            "ERROR_LICENSE_EXPIRE" : [[#{javascript.message.userDevice.error.license.expire}]],
+            "ERROR_LICENSE_OVER_MAX_USER" : [[#{javascript.message.userDevice.error.license.maxUser}]],
+            "ERROR_LICENSE_OVER_MAX_DEVICE" : [[#{javascript.message.userDevice.error.license.maxDevice}]],
+            "ERROR_NOT_FOUND_SSID_POLICY" : [[#{javascript.message.userDevice.error.not.found.ssid}]],
+            "ERROR_NOT_FOUND_USER_DEVICE" : [[#{javascript.message.userDevice.error.not.found.device}]],
+            "ERROR_FAIL_IP_RESERVED" : [[#{javascript.message.userDevice.error.ipReserved}]],
+            "ERROR_FAIL_AAA_SAVE_USER_DEVICE" : [[#{javascript.message.userDevice.error.add.aaa}]],
+            "SUCCESS_WIFI_SETTING_WINDOWS" : [[#{javascript.message.userDevice.success.windows.wlan.setting}]],
+            "ERROR_FAIL_CREATE_APPLE_DEVICE_PROFILE" : [[#{javascript.message.userDevice.error.create.apple.profile}]],
+        }
+
+        $(document).ready(function() {
+            checkProgramInstall();
+            mobileViewSideBar();
+            headerMenuImageOn();
+        });
+
+        function headerMenuImageOn() {
+            $(".nav-item").hover(function(){
+                $(this).next(".menu-explain").stop().slideDown(300);
+            },function(){
+                $(this).next(".menu-explain").stop().slideUp(200);
+            });
+        }
+
+        function mobileViewSideBar() {
+            $('#hamburger-button').click(function(){
+                $('#sideMenuWrap').animate({left: 0}, 1000);
+                $('#sideMenu').animate({left: 0}, 800);
+            });
+
+            $('#sideMenuWrap').click(function(e){
+                if (!$(event.target).closest('#sideMenu').length){
+                    $('#sideMenuWrap').animate({left: "-100%"}, 1000);
+                    $('#sideMenu').animate({left: "-100%"}, 1000);
+                }
+            });
+        }
+    </script>
+
+    <!-- content css -->
+    <th:block layout:fragment="css"></th:block>
+    <!-- content script -->
+    <th:block layout:fragment="script"></th:block>
+</head>
+</html>
