@@ -1,5 +1,18 @@
 $(function(){
+
 });
+
+function nextSlide(){
+    $('#notice').animate({
+        top:"-100%"
+    }, function (){
+        $('#notice > li').eq(0).appendTo('#notice');
+        $('#notice').css({
+            top:0
+        });
+    });
+};
+
 
 // to do: notice slide
 
