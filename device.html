@@ -1,48 +1,250 @@
 <!DOCTYPE html>
-<html
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/default-layout.html}"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="ko">
 <head>
-    <title th:text="#{page.title.userDevice}">[NPass Self Serviced Portal] User Device Page</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>&#91;NPass Self Serviced Portal&#93; User Device Page</title>
 
-    <th:block layout:fragment="script">
-        <script th:inline="javascript">
-            const pageName = "USER_DEVICE";
-            const userDeviceLogDescriptions = [[${userDeviceLogDescriptions}]];
-        </script>
+    <style type="text/tailwindcss">
+        @font-face {
+            font-family: 'Poppins';
+            font-weight: 300;
+            font-display: swap;
+            src: url(/static/font/Poppins/Poppins-Light.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Poppins';
+            font-weight: 400;
+            font-display: swap;
+            src: url(/static/font/Poppins/Poppins-Regular.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Poppins';
+            font-weight: 500;
+            font-display: swap;
+            src: url(/static/font/Poppins/Poppins-Medium.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Poppins';
+            font-weight: 600;
+            font-display: swap;
+            src: url(/static/font/Poppins/Poppins-SemiBold.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Poppins';
+            font-weight: 700;
+            font-display: swap;
+            src: url(/static/font/Poppins/Poppins-Bold.ttf) format('truetype');
+        }
+        @layer base {
+            html, body {
+                @apply font-poppins text-[13px] sm:text-[16px] md:text-[20px] lg:text-[16px];
+            }
+            select {
+                @apply outline-none appearance-none border-none;
+            }
+            input {
+                @apply outline-none appearance-none;
+            }
+            ::-webkit-scrollbar{
+                @apply hidden;
+            }
+        }
+        @layer components {
+            .transition-all-3ms-ease {
+                @apply transition-all duration-300 ease-in-out;
+            }
+            .paging-btn:has(> a.active) {
+                @apply bg-blue-ribbon-950 text-white;
+            }
+        }
+    </style>
 
-        <script type="text/javascript" th:src="@{/js/device/userDevice.js}"></script>
-        <script type="text/javascript" th:src="@{/js/device/wifiSetting.js}"></script>
-    </th:block>
+    <script src="/static/js/library/jquery-3.5.1.min.js"></script>
+    <script src="/static/js/library/tw3.4.1.js"></script>
+    <script src="/static/js/common/tailwind.config.js"></script>
+
+    <script src="/static/js/common/header.js"></script>
 </head>
 <body>
-    <main layout:fragment="content" class="h-screen pt-[8.9vh] lg:pt-20 lg:pb-[100px] md:min-h-[705px] overflow-auto">
+    <header id="pc-header" class="fixed top-0 left-0 w-full h-[8.9vh] lg:h-20 bg-cornflower-blue-600 lg:bg-blue-ribbon-950">
+        <!-- pc header -->
+        <div class="hidden w-[95%] max-w-[1160px] mx-auto h-full lg:flex justify-between items-center">
+            <h1 class="mr-24">
+                <a href="index.html"><img src="/static/images/main/mainLogo.svg" class="w-32 h-auto" alt="NPass"></a>
+            </h1>
+
+            <nav class="grow">
+                <ul class="flex gap-24">
+                    <li>
+                        <a class="nav-item group relative text-[22px] font-bold text-white" href="device.html">
+                            <div class="group-hover:block hidden absolute top-0 -right-3 w-2 h-2 bg-white rounded-full"></div>
+                            <span>Device</span>
+                        </a>
+                        <div class="menu-explain hidden absolute top-20 left-0 w-full h-[233px]" style="background: url(/static/images/banner/device-banner.png) no-repeat center/cover;">
+                            <div class="w-[95%] max-w-[1160px] mx-auto mt-[68px] text-white pl-56">
+                                <h2 class="text-[40px] tracking-[0.095em] font-bold">사용자 단말 관리</h2>
+                                <p class="text-sm mt-2">등록된 단말을 관리 하실 수 있습니다.</p>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li>
+                        <a class="nav-item group relative text-[22px] font-bold text-white" href="faq-list.html">
+                            <div class="group-hover:block hidden absolute top-0 -right-3 w-2 h-2 bg-white rounded-full"></div>
+                            <span>FAQ</span>
+                        </a>
+                        <div class="menu-explain hidden absolute top-20 left-0 w-full h-[233px]" style="background: url(/static/images/banner/faq-banner.svg) no-repeat center/cover;">
+                            <div class="w-[95%] max-w-[1160px] mx-auto mt-[68px] text-white pl-56">
+                                <h2 class="text-[40px] tracking-[0.095em] font-bold">자주하는 질문</h2>
+                                <p class="text-sm mt-2">자주하는 질문을 확인해보세요.</p>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li>
+                        <a class="nav-item group relative text-[22px] font-bold text-white" href="notice-list.html">
+                            <div class="group-hover:block hidden absolute top-0 -right-3 w-2 h-2 bg-white rounded-full"></div>
+                            <span>Notice</span>
+                        </a>
+                        <div class="menu-explain hidden absolute top-20 left-0 w-full h-[233px]" style="background: url(/static/images/banner/notice-banner.svg) no-repeat center/cover;">
+                            <div class="w-[95%] max-w-[1160px] mx-auto mt-[68px] text-white pl-56">
+                                <h2 class="text-[40px] tracking-[0.095em] font-bold">공지사항</h2>
+                                <p class="text-sm mt-2">새로운 공지사항을 알려드립니다.</p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+
+            <form class="flex items-center gap-3 text-white text-sm">
+                <button type="button" class="logout-btn border-b border-white hover:border-portage-400 hover:text-portage-400 transition-all-3ms-ease">
+                    <a href="/">로그아웃</a>
+                </button>
+
+                <a href="#" target="_blank" class="hover:text-portage-400 transition-all-3ms-ease ml-3">매뉴얼</a>
+
+                <select class="w-24 pl-3 pr-7 bg-transparent *:text-black" style="background: url(/static/images/main/selectWhiteTriangle.png) no-repeat top 3px right 8px/16px">
+                    <option value="ko">한국어</option>
+                    <option value="en">English</option>
+                </select>
+            </form>
+        </div>
+
+        <!-- mobile header -->
+        <div class="lg:hidden h-full flex items-center relative" id="mobileHeader">
+            <button id="hamburger-button" type="button" class="h-[41.6%] mx-[4%] ">
+                <img src="/static/images/main/hamburger-button.svg" class="w-auto h-full" alt="go to menu">
+            </button>
+            <h1 class="top-logo absolute top-1/2 left-[52%] -translate-x-1/2 -translate-y-1/2 text-[1.6rem] text-white font-bold text-nowrap">
+                사용자 단말 관리
+            </h1>
+        </div>
+        
+        <!-- mobile side -->
+        <div id="sideMenuWrap" class="block lg:hidden fixed top-0 -left-full w-full h-screen z-10">
+            <aside id="sideMenu" class="fixed top-0 -left-full z-10 flex flex-col justify-between w-[51%] min-w-52 max-w-[450px] h-full bg-white rounded-tr-3xl 
+            rounded-br-3xl shadow-[1px_2px_4px_0_rgba(0,0,0,0.25)] overflow-hidden">
+                <div class="h-[9%] min-h-[60px] px-[10%] border-b border-[#c1c7dc] flex items-center">
+                    <h2 class="h-1/2">
+                        <a href="/"><img src="/static/images/main/sidebar-logo.svg" class="w-auto h-full" alt="NPass"></a>
+                    </h2>
+                </div>
+
+                <div class="flex justify-center items-center h-[12.7vh] min-h-20">
+                    <form class="border border-cornflower-blue-300 flex justify-center items-center w-[90%] rounded-lg md:rounded-2xl overflow-hidden">
+                        <label class="flex justify-center items-center w-1/2 text-boulder-500 text-[4vw] font-bold bg-white py-[0.5vh] transition-all duration-150 has-[:checked]:text-black has-[:checked]:bg-cornflower-blue-300">
+                            <input type="radio" name="language" value="ko" class="appearance-none" checked>
+                            <span>KOR</span>
+                        </label>
+                        <label class="flex justify-center items-center w-1/2 text-boulder-500 text-[4vw] font-bold bg-white py-[0.5vh] transition-all duration-150 has-[:checked]:text-black has-[:checked]:bg-cornflower-blue-300">
+                            <input type="radio" name="language" value="en" class="appearance-none">
+                            <span>ENG</span>
+                        </label>
+                    </form>
+                </div>
+
+                <ul class="grow *:mb-[2vh]">
+                    <li>
+                        <a class="block pl-[10%] pr-[9%] py-1 w-[90%] rounded-r-full text-2xl font-semibold hover:text-right hover:bg-black hover:text-white" href="device.html">Device</a>
+                    </li>
+                    <li>
+                        <a class="block pl-[10%] pr-[9%] py-1 w-[90%] rounded-r-full text-2xl font-semibold hover:text-right hover:bg-black hover:text-white" href="faq-list.html">FAQ</a>
+                    </li>
+                    <li>
+                        <a class="block pl-[10%] pr-[9%] py-1 w-[90%] rounded-r-full text-2xl font-semibold hover:text-right hover:bg-black hover:text-white" href="notice-list.html">NOTICE</a>
+                    </li>
+                </ul>
+
+                <div class="border-t border-[#c1c7dc] flex justify-end items-center h-[9vh]">
+                    <button type="button" class="w-fit h-full">
+                        <img src="/static/images/headerFooter/manual-btn.png" class="w-auto h-full" alt="go to manual">
+                    </button>
+
+                    <button type="button" class="w-fit h-full">
+                        <img src="/static/images/headerFooter/logout-btn.png" class="w-auto h-full" alt="logout">
+                    </button>
+                </div>
+            </aside>
+        </div>
+    </header>
+
+    <footer id="pc-footer" class="hidden lg:block fixed bottom-0 left-0 w-full h-[100px] bg-white">
+        <div class="w-[95%] max-w-[1160px] mx-auto h-full flex justify-between items-center">
+            <div class="text-boulder-400">
+                <ul class="flex mb-1 *:after:content-['&#124;'] *:after:mx-[0.625rem] *:after:font-normal *:after:text-boulder-400">
+                    <li class="text-boulder-500 font-semibold">
+                        <a href="#">개인정보 처리방침</a>
+                    </li>
+                    <li>
+                        <span>&#40;주&#41;넷큐브</span>
+                    </li>
+                    <li class="last:after:content-none">
+                        <span>All Rights Reserved.</span>
+                    </li>
+                </ul>
+                <ul class="flex *:after:content-['&#124;'] *:after:mx-[0.625rem]">
+                    <li>
+                        <span>대표이사 유동호</span>
+                    </li>
+                    <li class="last:after:content-none">
+                        <span>&#40;우&#41; 08215 서울 구로구 경인로53길 90 STX-W타워 714호</span>
+                    </li>
+                </ul>
+            </div>
+    
+            <a href="/" class="h-2/5"><img class="w-auto h-full" alt="YourLogo"></a>
+        </div>
+    </footer>
+
+    <div id="modal-wrap"></div>
+    
+    <main class="h-screen pt-[8.9vh] lg:pt-20 lg:pb-[100px] md:min-h-[705px] overflow-auto">
         <!-- pc contents -->
         <div class="hidden lg:block w-[95%] max-w-[1160px] mx-auto pt-[4.5vh] overflow-auto" id="pcSection">
             <div class="flex h-[60px] mb-[1vh]">
                 <h3 class="text-3xl font-bold flex items-center mr-12">
                     <span class="w-[9px] h-[9px] bg-black rounded-full mr-[15px]"></span>
-                    <span th:text="#{pc.userDevice.title}">사용자 단말 관리</span>
+                    <span>사용자 단말 관리</span>
                 </h3>
                 <div class="grow text-xs text-waterloo-600 *:flex *:justify-end *:items-center *:h-1/2">
                     <ul class="border-b border-waterloo-600 *:px-1">
-                        <li><a href="/" th:text="#{pc.common.path.root}">HOME</a></li>
-                        <li><a href="/user-device" th:text="#{pc.common.path.userDevice}">DEVICE</a></li>
+                        <li><a href="/">HOME</a></li>
+                        <li>&#62;</li>
+                        <li><a href="device.html">DEVICE</a></li>
                     </ul>
                     <p>
-                        <img src="/images/icon/infor_square.svg" class="mr-[7px]">
-                        <span th:text="#{pc.userDevice.guideMessage}">3개월 미사용 시 기기가 자동으로 삭제됩니다.</span>
+                        <img src="/static/images/icon/infor_square.svg" class="mr-[7px]">
+                        <span>3개월 미사용 시 기기가 자동으로 삭제됩니다.</span>
                     </p>
                 </div>
             </div>
 
-            <div class=" flex justify-end gap-5 mb-[3vh]">
+            <div class="flex justify-end gap-5 mb-[3vh]">
                 <div class="border border-waterloo-600 rounded-[3px] flex items-center">
-                    <!--deviceTypes-->
-                    <select onchange="renderDeviceList();" id="deviceSelect" class="h-[38px] pl-3 pr-10 font-medium text-waterloo-600" style="background: url(/images/icon/down-arrow-gray.svg) no-repeat top 11px right 10px/auto;">
-                        <option th:each="deviceType : ${deviceTypes}" th:value="${deviceType.getDeviceTypeCode()}" th:utext="${deviceType.name()}"></option>
+                    <select id="deviceSelect" class="h-[38px] pl-3 pr-10 font-medium text-waterloo-600" style="background: url(/static/images/icon/down-arrow-gray.svg) no-repeat top 11px right 10px/auto;">
+                        <option value="">PC</option>
+                        <option value="">Mobile</option>
                     </select>
                 </div>
             </div>
@@ -51,40 +253,63 @@
                 <table class="w-full text-center table-fixed *:*:h-[50px]">
                     <thead class="bg-blue-ribbon-950 text-sm font-semibold text-white">
                         <tr class="*:after:content-['|'] *:after:font-normal *:after:float-right">
-                            <th:block th:if="${ipaIsUsed == true}">
-                                <th scope="col" class="w-[10%]"></th>
-                                <th scope="col" class="w-[12%]" th:text="#{pc.userDevice.tableHeader.no}">기기번호</th>
-                                <th scope="col" class="w-[21%]" th:text="#{pc.userDevice.tableHeader.nickname}">기기명</th>
-                                <th scope="col" class="w-[30%]" th:text="#{pc.userDevice.tableHeader.macAddress}">물리적 주소</th>
-                                <th scope="col" class="w-[17%]" th:text="#{pc.userDevice.tableHeader.registerDate}">등록일</th>
-                                <th scope="col" class="w-[10%] last:after:content-none" th:text="#{pc.userDevice.tableHeader.menu}">메뉴</th>
-                            </th:block>
-
-                            <th:block th:if="${ipaIsUsed == false}">
-                                <th scope="col" class="w-[14%]" th:text="#{pc.userDevice.tableHeader.no}">기기번호</th>
-                                <th scope="col" class="w-[23%]" th:text="#{pc.userDevice.tableHeader.nickname}">기기명</th>
-                                <th scope="col" class="w-[32%]" th:text="#{pc.userDevice.tableHeader.macAddress}">물리적 주소</th>
-                                <th scope="col" class="w-[19%]" th:text="#{pc.userDevice.tableHeader.registerDate}">등록일</th>
-                                <th scope="col" class="w-[12%] last:after:content-none" th:text="#{pc.userDevice.tableHeader.menu}">메뉴</th>
-                            </th:block>
+                            <th scope="col" class="w-[14%]">기기번호</th>
+                            <th scope="col" class="w-[23%]">기기명</th>
+                            <th scope="col" class="w-[32%]">물리적 주소</th>
+                            <th scope="col" class="w-[19%]">등록일</th>
+                            <th scope="col" class="w-[12%] last:after:content-none">메뉴</th>
                         </tr>
                     </thead>
-                    <tbody id="deviceList"></tbody>
+                    <tbody id="deviceList">
+                        <tr>
+                            <td>01</td>
+                            <td>test</td>
+                            <td>XX-XX-XX-XX-XX-XX</td>
+                            <td>2024/05/14</td>
+                            <td>
+                                <button type="button" class="mx-auto">
+                                    <img src="/static/images/icon/delete.svg" alt="delete this device">
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>02</td>
+                            <td>test</td>
+                            <td>XX-XX-XX-XX-XX-XX</td>
+                            <td>2024/05/14</td>
+                            <td>
+                                <button type="button" class="mx-auto">
+                                    <img src="/static/images/icon/delete.svg" alt="delete this device">
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>03</td>
+                            <td>test</td>
+                            <td>XX-XX-XX-XX-XX-XX</td>
+                            <td>2024/05/14</td>
+                            <td>
+                                <button type="button" class="mx-auto">
+                                    <img src="/static/images/icon/delete.svg" alt="delete this device">
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
 
             <div class="border border-mischka-400 rounded-[3px] flex text-mischka-400 text-sm font-bold h-[58px] mt-[6vh] shadow-[2px_2px_4px_rgba(0,0,0,0.25)]">
-                <h4 class="border-r border-mischka-400 w-[143px] flex justify-center items-center" th:text="#{pc.userDevice.addMenu.title}">현재 접속단말</h4>
+                <h4 class="border-r border-mischka-400 w-[143px] flex justify-center items-center">현재 접속단말</h4>
                 <div class="addMenu-middle grow flex justify-between p-[10px]">
                     <div class="grow flex items-center gap-5">
-                        <input id="deviceNickname" type="text" class="border border-santas-gray-600 w-[16.7rem] h-full rounded-[3px] px-[10px] placeholder:text-mischka-400" autocomplete="off" th:placeholder="#{pc.userDevice.addMenu.input.placeholder.nickname}">
+                        <input id="deviceNickname" type="text" class="border border-santas-gray-600 w-[16.7rem] h-full rounded-[3px] px-[10px] placeholder:text-mischka-400" autocomplete="off" placeholder="기기명을 입력해주세요.">
                         <p>
                             <span th:text="#{pc.userDevice.addMenu.macAddress}">Mac Address : </span>
-                            <span id="deviceMacAddress"><!-- MAC address --></span>
+                            <span id="deviceMacAddress">XX-XX-XX-XX-XX-XX</span>
                         </p>
                     </div>
 
-                    <button id="registerDeviceButton" onclick="startSaveDevice();" type="button" class="bg-mischka-900 w-[178px] text-white rounded-[3px] leading-none" th:text="#{pc.userDevice.addMenu.button.add}">무선 네트워크 설정</button>
+                    <button id="registerDeviceButton" type="button" class="bg-mischka-900 w-[178px] text-white rounded-[3px] leading-none">무선 네트워크 설정</button>
 
                     <th:block th:if="${ipaIsUsed == true}">
                         <button id="replaceDeviceButton" onclick="startReplaceDevice();" type="button" class="hidden bg-mischka-900 w-[178px] text-white rounded-[3px] leading-none" th:text="#{pc.userDevice.addMenu.button.replace}">단말 교체</button>
@@ -97,32 +322,105 @@
         <div class="block lg:hidden h-full" id="mobileSection">
             <div class="h-[calc(100%-17vh)] p-[4%]">
                 <div class="flex mt-2 mb-6 text-center *:w-[25%] *:h-12 *:text-base" id="deviceTypeSelectTab">
-                    <button type="button" th:each="deviceType : ${deviceTypes}" onclick="mobileRenderDeviceList(this);">
-                        <label class="flex justify-center items-center h-full px-2 mx-auto transition-all-3ms-ease has-[input:checked]:border-b has-[input:checked]:border-boulder-500 has-[input:checked]:font-bold">
-                            <input type="radio" name="deviceType" th:value="${deviceType.getDeviceTypeCode()}">
-                            <span class="whitespace-nowrap overflow-hidden text-ellipsis" th:text="${deviceType.name()}"></span>
-                        </label>
-                    </button>
+                    <label class="flex justify-center items-center h-full px-2 mx-auto transition-all-3ms-ease has-[input:checked]:border-b has-[input:checked]:border-boulder-500 has-[input:checked]:font-bold">
+                        <input type="radio" name="deviceType" value="" checked>
+                        <span class="whitespace-nowrap overflow-hidden text-ellipsis">All</span>
+                    </label>
+                    <label class="flex justify-center items-center h-full px-2 mx-auto transition-all-3ms-ease has-[input:checked]:border-b has-[input:checked]:border-boulder-500 has-[input:checked]:font-bold">
+                        <input type="radio" name="deviceType" value="">
+                        <span class="whitespace-nowrap overflow-hidden text-ellipsis">PC</span>
+                    </label>
+                    <label class="flex justify-center items-center h-full px-2 mx-auto transition-all-3ms-ease has-[input:checked]:border-b has-[input:checked]:border-boulder-500 has-[input:checked]:font-bold">
+                        <input type="radio" name="deviceType" value="">
+                        <span class="whitespace-nowrap overflow-hidden text-ellipsis">Mobile</span>
+                    </label>
                 </div>
 
-                <ul class="h-[calc(100%-1.75rem-5rem)] text-sm overflow-auto *:mb-3" id="deviceList"></ul>
+                <ul class="h-[calc(100%-1.75rem-5rem)] text-sm overflow-auto *:mb-3">
+                    <!-- 단말이 없을 때 -->
+                    <!-- <li class="border border-boulder-100 rounded-md p-[4%_3%]">
+                        등록된 단말이 없습니다.
+                    </li> -->
+
+                    <li class="border border-boulder-100 rounded-md overflow-hidden flex">
+                        <div class="flex justify-center items-center w-[15%]">
+                            <img src="/static/images/icon/pc-mockup.png" class="w-1/2 h-auto">
+                        </div>
+                        <ul class="w-[73%] py-[2%]">
+                            <li>device</li>
+                            <li>MAC Address : <span>11-22-33-44-55-66</span></li>
+                            <li>2024/05/14</li>
+                        </ul>
+                        <button type="button" class="border-l border-boulder-100 w-[12%] flex justify-center items-center">
+                            <img src="/static/images/icon/delete.svg" class="w-[30%] transition-all-3ms-ease" alt="delete this device">
+                        </button>
+                    </li>
+                    <li class="border border-boulder-100 rounded-md overflow-hidden flex">
+                        <div class="flex justify-center items-center w-[15%]">
+                            <img src="/static/images/icon/mobile-mockup.png" class="w-1/2 h-auto">
+                        </div>
+                        <ul class="w-[73%] py-[2%]">
+                            <li>device</li>
+                            <li>MAC Address : <span>11-22-33-44-55-66</span></li>
+                            <li>2024/05/14</li>
+                        </ul>
+                        <button type="button" class="border-l border-boulder-100 w-[12%] flex justify-center items-center">
+                            <img src="/static/images/icon/delete.svg" class="w-[30%] transition-all-3ms-ease" alt="delete this device">
+                        </button>
+                    </li>
+                    <li class="border border-boulder-100 rounded-md overflow-hidden flex">
+                        <div class="flex justify-center items-center w-[15%]">
+                            <img src="/static/images/icon/pc-mockup.png" class="w-1/2 h-auto">
+                        </div>
+                        <ul class="w-[73%] py-[2%]">
+                            <li>device</li>
+                            <li>MAC Address : <span>11-22-33-44-55-66</span></li>
+                            <li>2024/05/14</li>
+                        </ul>
+                        <button type="button" class="border-l border-boulder-100 w-[12%] flex justify-center items-center">
+                            <img src="/static/images/icon/delete.svg" class="w-[30%] transition-all-3ms-ease" alt="delete this device">
+                        </button>
+                    </li>
+                    <li class="border border-boulder-100 rounded-md overflow-hidden flex">
+                        <div class="flex justify-center items-center w-[15%]">
+                            <img src="/static/images/icon/mobile-mockup.png" class="w-1/2 h-auto">
+                        </div>
+                        <ul class="w-[73%] py-[2%]">
+                            <li>device</li>
+                            <li>MAC Address : <span>11-22-33-44-55-66</span></li>
+                            <li>2024/05/14</li>
+                        </ul>
+                        <button type="button" class="border-l border-boulder-100 w-[12%] flex justify-center items-center">
+                            <img src="/static/images/icon/delete.svg" class="w-[30%] transition-all-3ms-ease" alt="delete this device">
+                        </button>
+                    </li>
+                    <li class="border border-boulder-100 rounded-md overflow-hidden flex">
+                        <div class="flex justify-center items-center w-[15%]">
+                            <img src="/static/images/icon/pc-mockup.png" class="w-1/2 h-auto">
+                        </div>
+                        <ul class="w-[73%] py-[2%]">
+                            <li>device</li>
+                            <li>MAC Address : <span>11-22-33-44-55-66</span></li>
+                            <li>2024/05/14</li>
+                        </ul>
+                        <button type="button" class="border-l border-boulder-100 w-[12%] flex justify-center items-center">
+                            <img src="/static/images/icon/delete.svg" class="w-[30%] transition-all-3ms-ease" alt="delete this device">
+                        </button>
+                    </li>
+                </ul>
             </div>
 
             <div class="flex flex-col justify-center gap-[2vh] w-full h-[17vh] bg-blue-ribbon-950 text-white text-base px-[4%] rounded-t-xl">
                 <div class="flex items-center gap-[2%] px-1 text-nowrap">
-                    <h3 th:text="#{mobile.userDevice.addMenu.title}">현재 접속단말</h3>
+                    <h3>현재 접속단말</h3>
                     <p class="grow whitespace-nowrap overflow-hidden text-ellipsis">
-                        <span th:text="#{mobile.userDevice.addMenu.macAddress}">Mac Address : </span>
-                        <span id="deviceMacAddress"></span>
+                        <span>Mac Address &#58; </span>
+                        <span id="deviceMacAddress">XX-XX-XX-XX-XX-XX</span>
                     </p>
                 </div>
                 <div class="flex gap-[2%] h-11 *:rounded-md">
-                    <input id="deviceNickname" class="text-black w-3/5 px-3 border-2 border-blue-ribbon-950 whitespace-nowrap overflow-hidden text-ellipsis" type="text" th:placeholder="#{mobile.userDevice.addMenu.input.placeholder.nickname}" autocomplete="off">
-                    <button id="registerDeviceButton" onclick="startSaveDevice();" type="button" class="bg-black w-[38%] font-bold text-pretty leading-none" th:text="#{mobile.userDevice.addMenu.button.add}">무선 네트워크 설정</button>
-
-                    <th:block th:if="${ipaIsUsed == true}">
-                        <button id="replaceDeviceButton" onclick="startReplaceDevice();" type="button" class="hidden bg-black w-[38%] font-bold text-pretty leading-none" th:text="#{mobile.userDevice.addMenu.button.replace}">단말 교체</button>
-                    </th:block>
+                    <input id="deviceNickname" class="text-black w-3/5 px-3 border-2 border-blue-ribbon-950 whitespace-nowrap overflow-hidden text-ellipsis" type="text" th:placeholder="기기명을 입력해주세요." autocomplete="off">
+                    <button id="registerDeviceButton" type="button" class="bg-black w-[38%] font-bold text-pretty leading-none">무선 네트워크 설정</button>
                 </div>
             </div>
         </div>

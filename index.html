@@ -3,38 +3,38 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title th:text="#{page.title.main}">[NPass Self Serviced Portal] Main Landing Page</title>
+    <title>&#91;NPass Self Serviced Portal&#92; Main Landing Page</title>
 
     <style type="text/tailwindcss">
         @font-face {
             font-family: 'Poppins';
             font-weight: 300;
             font-display: swap;
-            src: url(static/font/Poppins/Poppins-Light.ttf) format('truetype');
+            src: url(/static/font/Poppins/Poppins-Light.ttf) format('truetype');
         }
         @font-face {
             font-family: 'Poppins';
             font-weight: 400;
             font-display: swap;
-            src: url(static/font/Poppins/Poppins-Regular.ttf) format('truetype');
+            src: url(/static/font/Poppins/Poppins-Regular.ttf) format('truetype');
         }
         @font-face {
             font-family: 'Poppins';
             font-weight: 500;
             font-display: swap;
-            src: url(static/font/Poppins/Poppins-Medium.ttf) format('truetype');
+            src: url(/static/font/Poppins/Poppins-Medium.ttf) format('truetype');
         }
         @font-face {
             font-family: 'Poppins';
             font-weight: 600;
             font-display: swap;
-            src: url(static/font/Poppins/Poppins-SemiBold.ttf) format('truetype');
+            src: url(/static/font/Poppins/Poppins-SemiBold.ttf) format('truetype');
         }
         @font-face {
             font-family: 'Poppins';
             font-weight: 700;
             font-display: swap;
-            src: url(static/font/Poppins/Poppins-Bold.ttf) format('truetype');
+            src: url(/static/font/Poppins/Poppins-Bold.ttf) format('truetype');
         }
         @layer base {
             html, body {
@@ -43,22 +43,23 @@
             select {
                 @apply outline-none appearance-none border-none;
             }
+            ::-webkit-scrollbar {
+                @apply hidden;
+            }
         }
         @layer components {
             .transition-all-3ms-ease {
                 @apply transition-all duration-300 ease-in-out;
             }
-            #sideMenu label:has(input[type="radio"]:checked) {
-                @apply text-black bg-cornflower-blue-300;
-            }
         }
     </style>
 
-    <script src="static/js/library/jquery-3.5.1.min.js"></script>
-    <script src="static/js/library/tw3.4.1.js"></script>
-    <script src="static/js/common/tailwind.config.js"></script>
+    <script src="/static/js/library/jquery-3.5.1.min.js"></script>
+    <script src="/static/js/library/tw3.4.1.js"></script>
+    <script src="/static/js/common/tailwind.config.js"></script>
 
-    <script src="/js/main/main.js"></script>
+    <script src="/static/js/common/header.js"></script>
+    <script src="/static/js/main/main.js"></script>
 </head>
 <body>
     <!-- pc wrap -->
@@ -71,7 +72,7 @@
                 </h1>
                 <nav>
                     <ul class="flex *:text-2xl *:font-bold">
-                        <li sec:authorize="isAuthenticated()">
+                        <li>
                             <a class="px-8 text-white hover:text-black transition-all-3ms-ease" href="device.html">
                                 Device
                             </a>
@@ -95,15 +96,15 @@
             <!-- right header -->
             <div class="hidden lg:block w-[37%] pr-[2.5%] text-sm">
                 <form class="flex justify-end gap-5 text-boulder-500 *:leading-5">
-                    <button type="button" sec:authorize="isAuthenticated()">
-                        <a href="/logout" class="border-b border-boulder-500 transition-all-3ms-ease hover:text-cornflower-blue-400 hover:border-cornflower-blue-400" th:text="#{pc.main.header.logout}">로그아웃</a>
+                    <button type="button">
+                        <a href="/logout" class="border-b border-boulder-500 transition-all-3ms-ease hover:text-cornflower-blue-400 hover:border-cornflower-blue-400">로그아웃</a>
                     </button>
 
-                    <button type="button" class="px-2 hover:text-cornflower-blue-400 transition-all-3ms-ease" th:text="#{pc.main.header.manual}">메뉴얼</button>
+                    <a href="#" target="_blank" class="px-2 hover:text-cornflower-blue-400 transition-all-3ms-ease">메뉴얼</a>
 
-                    <select class="bg-transparent w-[5.8rem] pl-2 pr-9" style="background: url(static/images/main/selectGrayTriangle.png) no-repeat right 0.5rem center/17%;" onchange="if(this.value) location.href=(this.value);">
-                        <option value="?lang=ko" th:selected="${#locale.language == 'ko'}" th:text="#{pc.main.header.language.select.ko}">한국어</option>
-                        <option value="?lang=en" th:selected="${#locale.language == 'en'}" th:text="#{pc.main.header.language.select.en}">English</option>
+                    <select class="bg-transparent w-[5.8rem] pl-2 pr-9" style="background: url(/static/images/main/selectGrayTriangle.png) no-repeat right 0.5rem center/17%;">
+                        <option value="ko">한국어</option>
+                        <option value="en">English</option>
                     </select>
                 </form>
             </div>
@@ -114,28 +115,69 @@
             <div class="grow relative flex flex-col justify-center p-[7%_9%_7%_12%]">
                 <div class="slogan-wrap *:text-white">
                     <h2 class="title text-[5vw] font-bold leading-snug">
-                        <img src='static/images/main/mainLogo.svg' class="w-[42%] h-auto -ml-12 pb-5" alt='mainLogo'>
-                        <span th:utext="#{pc.main.leftArea.title}">Smart work<br>Portal</span>
+                        <img src='/static/images/main/mainLogo.svg' class="w-[42%] h-auto -ml-12 pb-5" alt='mainLogo'>
+                        <span>Smart work<br>Portal</span>
                     </h2>
-                    <p class="message text-[1.3vw] font-medium leading-relaxed mt-[5%]" th:utext="#{pc.main.leftArea.message}">
+                    <p class="message text-[1.3vw] font-medium leading-relaxed mt-[5%]">
                         <strong>NPass</strong>는 Smart work를<br>운영하는 기업과 이용자의 보안을 최우선으로 생각합니다.
                     </p>
                 </div>
 
-                <div class="noticeGroup flex h-12 rounded-[70px_5px] mt-[9%] shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] overflow-hidden">
+                <div class="flex h-12 rounded-[70px_5px] mt-[9%] shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] overflow-hidden">
                     <h3 class="bg-blue-ribbon-400 text-center w-[20%] flex items-center justify-center">
-                        <a id="noticeMenu" href="/notice" class="text-white text-[0.925vw] font-bold mt-1" th:text="#{pc.main.leftArea.notice}">공지사항</a>
+                        <a id="noticeMenu" href="/notice" class="text-white text-[0.925vw] font-bold mt-1">공지사항</a>
                     </h3>
 
-                    <ul id="notice" class="relative grow h-full bg-white"></ul>
+                    <ul id="notice" class="relative grow h-full bg-white">
+                        <li class="w-full h-full text-[15px] pl-[8.5%]" style="background: #fff url(/static/images/main/noticeBell.svg) no-repeat 3% center/18px auto;">
+                            <a href='notice-detail.html' class="grow flex items-center h-full mr-3 overflow-hidden">
+                                <span class="mr-2">[NEW]</span>
+                                <span class='inline-block w-[25vw] whitespace-nowrap overflow-hidden text-ellipsis'>
+                                    title 01
+                                </span>
+                            </a>
+                        </li>
+                        <li class="w-full h-full text-[15px] pl-[8.5%]" style="background: #fff url(/static/images/main/noticeBell.svg) no-repeat 3% center/18px auto;">
+                            <a href='notice-detail.html' class="grow flex items-center h-full mr-3 overflow-hidden">
+                                <span class="mr-2">[NEW]</span>
+                                <span class='inline-block w-[25vw] whitespace-nowrap overflow-hidden text-ellipsis'>
+                                    title 02
+                                </span>
+                            </a>
+                        </li>
+                        <li class="w-full h-full text-[15px] pl-[8.5%]" style="background: #fff url(/static/images/main/noticeBell.svg) no-repeat 3% center/18px auto;">
+                            <a href='notice-detail.html' class="grow flex items-center h-full mr-3 overflow-hidden">
+                                <span class="mr-2">[NEW]</span>
+                                <span class='inline-block w-[25vw] whitespace-nowrap overflow-hidden text-ellipsis'>
+                                    title 03
+                                </span>
+                            </a>
+                        </li>
+                        <li class="w-full h-full text-[15px] pl-[8.5%]" style="background: #fff url(/static/images/main/noticeBell.svg) no-repeat 3% center/18px auto;">
+                            <a href='notice-detail.html' class="grow flex items-center h-full mr-3 overflow-hidden">
+                                <span class="mr-2">[NEW]</span>
+                                <span class='inline-block w-[25vw] whitespace-nowrap overflow-hidden text-ellipsis'>
+                                    title 04
+                                </span>
+                            </a>
+                        </li>
+                        <li class="w-full h-full text-[15px] pl-[8.5%]" style="background: #fff url(/static/images/main/noticeBell.svg) no-repeat 3% center/18px auto;">
+                            <a href='notice-detail.html' class="grow flex items-center h-full mr-3 overflow-hidden">
+                                <span class="mr-2">[NEW]</span>
+                                <span class='inline-block w-[25vw] whitespace-nowrap overflow-hidden text-ellipsis'>
+                                    title 05
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
 
                     <div class="scroll-updown flex flex-col justify-around w-[8%] bg-white">
                         <button id="up" type="button" class="w-4">
-                            <img src="static/images/main/selectBlueTriangle.svg" class="rotate-180" alt="up button">
+                            <img src="/static/images/main/selectBlueTriangle.svg" class="rotate-180" alt="up button">
                         </button>
 
                         <button id="down" type="button" class="w-4">
-                            <img src="static/images/main/selectBlueTriangle.svg" alt="down button">
+                            <img src="/static/images/main/selectBlueTriangle.svg" alt="down button">
                         </button>
                     </div>
                 </div>
@@ -151,64 +193,33 @@
 
             <!-- pc contents right -->
             <div class="w-[37%] p-[15vh_6%_12vh] flex flex-col justify-center gap-[6vw]">
-                <div sec:authorize="isAnonymous()">
-                    <h2 class="text-[1.8vw] leading-[3.2vw] tracking-[0.08rem] mb-[5%]" th:utext="#{pc.main.rightArea.isAnonymous.message1}">
-                        임직원 및 방문자는<br>,<span class="text-cornflower-blue-400 text-[2.1vw] font-bold leading-[3.2vw] tracking-[0.08rem]">로그인</span><small>을</small> 해주세요.
+                <div>
+                    <h2 class="text-[1.8vw] leading-[3.2vw] tracking-[0.08rem] mb-[5%]">
+                        임직원 및 방문자는<br><span class="text-cornflower-blue-400 text-[2.1vw] font-bold leading-[3.2vw] tracking-[0.08rem]">로그인</span><small>을</small> 해주세요.
                     </h2>
-                    <p class="text-[0.85vw] leading-[1.4vw]" th:utext="#{pc.main.rightArea.isAnonymous.message2}">
+                    <p class="text-[0.85vw] leading-[1.4vw]">
                         <span class="text-cornflower-blue-400 font-medium">NPass SSP</span> 이용을 위해 <br>하단의 버튼을 클릭하여 로그인 페이지로 이동해주세요.
                     </p>
                 </div>
-                <div sec:authorize="isAuthenticated()">
-                    <h2 class="text-[1.8vw] leading-[3.2vw] tracking-[0.08rem] mb-[5%]">
-                        <span th:text="#{pc.main.rightArea.isAuthenticated.message1}">환영합니다.</span>
-                        <br>
 
-                        <th:block th:if="${#authentication.principal.userType.userTypeCode == 'I'}">
-                            <span class="text-cornflower-blue-400 font-bold" sec:authentication="principal.employeeInfo.username">홍길동</span>
-                        </th:block>
-
-                        <th:block th:if="${#authentication.principal.userType.userTypeCode == 'O'}">
-                            <span class="text-cornflower-blue-400 font-bold" sec:authentication="principal.visitorInfo.username">홍길동</span>
-                        </th:block>
-
-                        <span th:text="#{pc.main.rightArea.isAuthenticated.message2}">님</span>
-                    </h2>
-                    <p class="text-[0.85vw] leading-[1.4vw]" th:utext="#{pc.main.rightArea.isAuthenticated.message3}">
-                        <span class="font-extrabold">본인인증이 완료되었습니다.</span><br>디바이스 관리 및 무선랜 설정을 이용하실 수 있습니다.
-                    </p>
-                </div>
-
-                <div sec:authorize="isAnonymous()" class="flex justify-between items-center gap-[0.3vw] h-[13.5vw] *:flex *:flex-col *:justify-center *:items-center *:gap-[1.2vw] *:w-[11vw] *:h-[14.3vw] *:rounded-md *:shadow-[1px_2px_4px_2px_rgba(0,0,0,0.2)] *:border-[0.15vw] *:bg-white">
-                    <button type="button" class="border-cornflower-blue-400 hover:bg-cornflower-blue-400 group" th:onclick="|location.href='@{/authenticate/employee}'|"/>
+                <div class="flex justify-between items-center gap-[0.3vw] h-[13.5vw] *:flex *:flex-col *:justify-center *:items-center *:gap-[1.2vw] *:w-[11vw] *:h-[14.3vw] *:rounded-md *:shadow-[1px_2px_4px_2px_rgba(0,0,0,0.2)] *:border-[0.15vw] *:bg-white">
+                    <button type="button" class="border-cornflower-blue-400 hover:bg-cornflower-blue-400 group" onclick="location.href='authenticate-employee.html'">
                         <div class="relative w-[5vw] h-[5.5vw] *:absolute *:top-1/2 *:left-1/2 *:-translate-x-1/2 *:-translate-y-1/2 *:transition-all-3ms-ease">
-                            <img src="static/images/main/employee.svg" class="opacity-100 group-hover:opacity-0" alt="employee button">
-                            <img src="static/images/main/employee_hover.svg" class=" opacity-0 group-hover:opacity-100" alt="employee button">
+                            <img src="/static/images/main/employee.svg" class="opacity-100 group-hover:opacity-0" alt="employee button">
+                            <img src="/static/images/main/employee_hover.svg" class=" opacity-0 group-hover:opacity-100" alt="employee button">
                         </div>
-                        <span class="text-cornflower-blue-400 text-[1vw] font-semibold tracking-tighter transition-all-3ms-ease group-hover:text-white" th:text="#{pc.main.rightArea.button.authenticate.employee}">
+                        <span class="text-cornflower-blue-400 text-[1vw] font-semibold tracking-tighter transition-all-3ms-ease group-hover:text-white">
                             임직원
                         </span>
                     </button>
 
-                    <button type="button" class="border-boulder-500 hover:bg-boulder-500 group" th:onclick="|location.href='@{/authenticate/visitor}'|"/>
+                    <button type="button" class="border-boulder-500 hover:bg-boulder-500 group" onclick="location.href='authenticate-visitor.html'">
                         <div class="relative w-[5vw] h-[5.5vw] *:absolute *:top-1/2 *:left-1/2 *:-translate-x-1/2 *:-translate-y-1/2 *:transition-all-3ms-ease">
-                            <img src="static/images/main/visitor.svg" class="opacity-100 group-hover:opacity-0" alt="visitor button">
-                            <img src="static/images/main/visitor_hover.svg" class=" opacity-0 group-hover:opacity-100" alt="visitor button">
+                            <img src="/static/images/main/visitor.svg" class="opacity-100 group-hover:opacity-0" alt="visitor button">
+                            <img src="/static/images/main/visitor_hover.svg" class=" opacity-0 group-hover:opacity-100" alt="visitor button">
                         </div>
-                        <span class="text-boulder-500 text-[1vw] font-semibold tracking-tighter transition-all-3ms-ease group-hover:text-white" th:text="#{pc.main.rightArea.button.authenticate.visitor}">
+                        <span class="text-boulder-500 text-[1vw] font-semibold tracking-tighter transition-all-3ms-ease group-hover:text-white">
                             방문자
-                        </span>
-                    </button>
-                </div>
-
-                <div sec:authorize="isAuthenticated()" class="flex justify-between items-center gap-[0.3vw] h-[13.5vw] *:flex *:flex-col *:justify-center *:items-center *:gap-[1.2vw] *:w-[11vw] *:h-[14.3vw] *:rounded-md *:shadow-[1px_2px_4px_2px_rgba(0,0,0,0.2)] *:border-[0.15vw] *:bg-white">
-                    <button type="button" id="deviceManageBtn" class="border-cornflower-blue-400 hover:bg-cornflower-blue-400 group" th:onclick="|location.href='@{/user-device}'|"/>
-                        <div class="relative w-[5vw] h-[5.5vw] *:absolute *:top-1/2 *:left-1/2 *:-translate-x-1/2 *:-translate-y-1/2 *:transition-all-3ms-ease">
-                            <img src="static/images/main/device.svg" class="opacity-100 group-hover:opacity-0" alt="device button">
-                            <img src="static/images/main/device_hover.svg" class=" opacity-0 group-hover:opacity-100" alt="device button">
-                        </div>
-                        <span class="text-cornflower-blue-400 text-[1vw] font-semibold tracking-tighter transition-all-3ms-ease group-hover:text-white" th:text="#{pc.main.rightArea.button.userDevice}">
-                            사용자 단말 관리
                         </span>
                     </button>
                 </div>
@@ -216,14 +227,13 @@
                 <nav class="text-xs text-boulder-600">
                     <ul class="flex justify-between items-center text-nowrap">
                         <li>
-                            <!--todo : privacy policy modal-->
-                            <a href="#" th:text="#{pc.main.rightArea.bottom.privacy.policy}">개인정보 처리방침</a>
+                            <a href="#">개인정보 처리방침</a>
                         </li>
                         <li>
-                            <span th:text="#{pc.main.rightArea.bottom.netcube}">(주)넷큐브</span>
+                            <span>&#40;주&#41;넷큐브</span>
                         </li>
                         <li>
-                            <span th:text="#{pc.main.rightArea.bottom.right.reserved}">All Rights Reserved.</span>
+                            <span>All Rights Reserved.</span>
                         </li>
                     </ul>
                 </nav>
@@ -235,7 +245,7 @@
     <div class="block lg:hidden">
         <header class="flex items-center h-[8.9vh]">
             <button id="hamburger-button" type="button" class="h-[41.6%] mx-[4%]">
-                <img src="static/images/main/hamburger-button.svg" class="w-auto h-full" alt="go to menu">
+                <img src="/static/images/main/hamburger-button.svg" class="w-auto h-full" alt="go to menu">
             </button>
             <h1 class="w-[72%] h-[41.6%] flex justify-center">
                 <img class="w-auto h-full" alt="YourLogo">
@@ -245,102 +255,93 @@
         <div id="sideMenuWrap" class="fixed top-0 -left-full w-full h-screen z-10">
             <aside id="sideMenu" class="fixed top-0 -left-full flex flex-col justify-between w-[51%] min-w-52 max-w-[450px] h-full bg-white rounded-tr-3xl rounded-br-3xl z-20 shadow-[1px_2px_4px_0_rgba(0,0,0,0.25)] overflow-hidden">
                 <h2 class="h-[11%] min-h-14 pl-[10%] border-b border-[#c1c7dc] flex items-center">
-                    <img src="static/images/main/sidebar-logo.svg" class="w-3/5 h-auto" alt="NPass">
+                    <img src="/static/images/main/sidebar-logo.svg" class="w-3/5 h-auto" alt="NPass">
                 </h2>
                 
                 <div class="flex justify-center items-center h-[12.7vh] min-h-20">
                     <form class="border border-cornflower-blue-300 flex justify-center items-center w-[90%] rounded-lg md:rounded-2xl overflow-hidden">
-                        <label class="flex justify-center items-center w-1/2 text-boulder-500 text-[4vw] font-bold bg-white py-[0.5vh] transition-all duration-150">
-                            <input type="radio" name="language" value="?lang=ko" class="appearance-none group-checked:bg-slate-300" th:checked="${#locale.language == 'ko'}" onchange="if(this.value) location.href=(this.value);">
-                            <span th:text="#{mobile.main.sideBar.language.select.ko}">KOR</span>
+                        <label class="flex justify-center items-center w-1/2 text-boulder-500 text-[4vw] font-bold bg-white py-[0.5vh] transition-all duration-150 has-[:checked]:text-black has-[:checked]:bg-cornflower-blue-300">
+                            <input type="radio" name="language" value="ko" class="appearance-none checked:text-black checked:bg-cornflower-blue-300" checked>
+                            <span>KOR</span>
                         </label>
-                        <label class="flex justify-center items-center w-1/2 text-boulder-500 text-[4vw] font-bold bg-white py-[0.5vh] transition-all duration-150">
-                            <input type="radio" name="language" value="?lang=en" class="appearance-none" th:checked="${#locale.language == 'en'}" onchange="if(this.value) location.href=(this.value);">
-                            <span th:text="#{mobile.main.sideBar.language.select.en}">ENG</span>
+                        <label class="flex justify-center items-center w-1/2 text-boulder-500 text-[4vw] font-bold bg-white py-[0.5vh] transition-all duration-150 has-[:checked]:text-black has-[:checked]:bg-cornflower-blue-300">
+                            <input type="radio" name="language" value="en" class="appearance-none">
+                            <span>ENG</span>
                         </label>
                     </form>
                 </div>
 
                 <ul class="grow pl-[10%] *:mt-[2vh]">
-                    <li sec:authorize="isAuthenticated()">
-                        <a class="w-full block text-[5vw] font-bold" href="/user-device" th:text="#{mobile.main.sideBar.menu.userDevice}">Device</a>
+                    <li>
+                        <a class="w-full block text-[5vw] font-bold" href="device.html">Device</a>
                     </li>
                     <li>
-                        <a class="w-full block text-[5vw] font-bold" href="/faq" th:text="#{mobile.main.sideBar.menu.faq}">FAQ</a>
+                        <a class="w-full block text-[5vw] font-bold" href="faq-list.html">FAQ</a>
                     </li>
                     <li>
-                        <a class="w-full block text-[5vw] font-bold" href="/notice" th:text="#{mobile.main.sideBar.menu.notice}">NOTICE</a>
+                        <a class="w-full block text-[5vw] font-bold" href="notice-list.html">NOTICE</a>
                     </li>
                 </ul>
 
                 <div class="border-t border-[#c1c7dc] flex justify-end items-center h-[9vh]">
                     <button type="button" class="w-fit h-full">
-                        <img src="static/images/headerFooter/manual-btn.png" class="w-auto h-full" alt="go to manual">
+                        <img src="/static/images/headerFooter/manual-btn.png" class="w-auto h-full" alt="go to manual">
                     </button>
 
-                    <button type="button" class="w-fit h-full" th:onclick="|location.href='@{/logout}'|" sec:authorize="isAuthenticated()">
-                        <img src="static/images/headerFooter/logout-btn.png" class="w-auto h-full" alt="logout">
+                    <button type="button" class="w-fit h-full">
+                        <img src="/static/images/headerFooter/logout-btn.png" class="w-auto h-full" alt="logout">
                     </button>
                 </div>
             </aside>
         </div>
 
         <main class="h-[91vh] overflow-auto">
-            <div sec:authorize="isAnonymous()" class="w-10/12 h-full max-w-[650px] mx-auto py-[3vh] flex flex-col justify-center">
+            <div class="w-10/12 h-full max-w-[650px] mx-auto py-[3vh] flex flex-col justify-center">
                 <h3 class="text-white text-[11vw] font-bold text-nowrap *:mb-[3vh]">
-                    <img src="static/images/main/mainLogo.svg" class="w-[51%] h-auto" alt="NPass">
-                    <p class="leading-none" th:text="#{mobile.main.body.isAnonymous.title1}">Smart work</p>
-                    <p class="leading-none last:mb-0" th:text="#{mobile.main.body.isAnonymous.title2}">Portal</p>
+                    <img src="/static/images/main/mainLogo.svg" class="w-[51%] h-auto" alt="NPass">
+                    <p class="leading-none">Smart work</p>
+                    <p class="leading-none last:mb-0">Portal</p>
                 </h3>
     
                 <div class="my-[6vh] text-white text-[4.5vw] font-semibold *:mb-[1.1vh]">
-                    <p th:text="#{mobile.main.body.isAnonymous.message1}">NPass는 Smart work를</p>
-                    <p th:text="#{mobile.main.body.isAnonymous.message2}">운영하는 기업과 이용자의 보안을</p>
-                    <p th:text="#{mobile.main.body.isAnonymous.message3}">최우선으로 생각합니다.</p>
+                    <p>NPass는 Smart work를</p>
+                    <p>운영하는 기업과 이용자의 보안을</p>
+                    <p>최우선으로 생각합니다.</p>
                 </div>
     
                 <div class="flex flex-col gap-[3vh] *:h-[6.5vh] *:min-h-12 *:rounded-lg *:font-semibold">
-                    <button class="bg-black text-white text-[18px] sm:text-xl md:text-[3vw]" th:onclick="|location.href='@{/authenticate/employee}'|" th:text="#{mobile.main.body.button.authenticate.employee}">임직원</button>
-                    <button class="bg-white text-black text-[18px] sm:text-xl md:text-[3vw]" th:onclick="|location.href='@{/authenticate/visitor}'|" th:text="#{mobile.main.body.button.authenticate.visitor}">방문객</button>
+                    <button class="bg-black text-white text-[18px] sm:text-xl md:text-[3vw]" onclick="location.href='authenticate-employee.html'">임직원</button>
+                    <button class="bg-white text-black text-[18px] sm:text-xl md:text-[3vw]" onclick="location.href='authenticate-visitor.html'">방문객</button>
                 </div>
             </div>
 
-            <div sec:authorize="isAuthenticated()" class="w-10/12 h-full max-w-[650px] mx-auto py-[3vh] flex flex-col justify-center">
+            <!-- 로그인 후 -->
+            <!-- <div class="w-10/12 h-full max-w-[650px] mx-auto py-[3vh] flex flex-col justify-center">
                 <h3 class="text-white text-[11vw] font-bold text-nowrap">
-                    <span th:text="#{mobile.main.body.isAuthenticated.title1}">환영합니다.</span>
-                    <br>
-
-                    <th:block th:if="${#authentication.principal.userType.userTypeCode == 'I'}">
-                        <span sec:authentication="principal.employeeInfo.username">홍길동</span>
-                    </th:block>
-
-                    <th:block th:if="${#authentication.principal.userType.userTypeCode == 'O'}">
-                        <span sec:authentication="principal.visitorInfo.username">홍길동</span>
-                    </th:block>
-
-                    <span th:text="#{mobile.main.body.isAuthenticated.title2}">님</span>
+                    <span>환영합니다.</span><br>
+                    <span>홍길동</span><span>님</span>
                 </h3>
 
                 <div class="my-[6vh] text-white text-[4.5vw] font-semibold *:mb-[1.1vh]">
-                    <p th:text="#{mobile.main.body.isAuthenticated.message1}">본인인증이 완료되었습니다.</p>
-                    <p th:text="#{mobile.main.body.isAuthenticated.message2}">사용자 단말 관리 및 무선랜 설정을</p>
-                    <p th:text="#{mobile.main.body.isAuthenticated.message3}">이용하실 수 있습니다.</p>
+                    <p>본인인증이 완료되었습니다.</p>
+                    <p>사용자 단말 관리 및 무선랜 설정을</p>
+                    <p>이용하실 수 있습니다.</p>
                 </div>
 
                 <div class="flex flex-col gap-[3vh] *:h-[6.5vh] *:min-h-12 *:rounded-lg *:font-semibold">
-                    <button class="bg-black text-white text-[18px] sm:text-xl md:text-[3vw]" th:onclick="|location.href='@{/user-device}'|" th:text="#{mobile.main.body.button.userDevice}">사용자 단말 관리</button>
+                    <button class="bg-black text-white text-[18px] sm:text-xl md:text-[3vw]" onclick="location.href='device.html'">사용자 단말 관리</button>
                 </div>
-            </div>
+            </div> -->
         </main>
 
         <!-- mobile background -->
         <div class="fixed top-0 left-0 -z-10 w-full h-screen bg-[#7d9aff] overflow-hidden *:absolute *:h-auto *:-translate-x-1/2 *:-translate-y-1/2">
-            <img class="top-[18%] left-[8%] w-[19%] min-w-20" src="static/images/main/m-bg-circle-stripe-white.svg" alt="background circle">
-            <img class="top-[29%] left-[28%] w-[35%] min-w-44" src="static/images/main/m-bg-circle-deep-blue.svg" alt="background circle">
-            <img class="top-[18%] left-[94%] w-[35%] min-w-56" src="static/images/main/m-bg-circle-stripe-blue.svg" alt="background circle">
-            <img class="top-[68%] left-[17%] w-[27%] min-w-28" src="static/images/main/m-bg-circle-stripe-white-2.svg" alt="background circle">
-            <img class="top-[72%] left-[85%] w-[50%] min-w-64" src="static/images/main/m-bg-circle-light-blue.svg" alt="background circle">
-            <img class="top-[95%] left-[27%] w-[35%] min-w-36" src="static/images/main/m-bg-circle-light-blue-2.svg" alt="background circle">
+            <img class="top-[18%] left-[8%] w-[19%] min-w-20" src="/static/images/main/m-bg-circle-stripe-white.svg" alt="background circle">
+            <img class="top-[29%] left-[28%] w-[35%] min-w-44" src="/static/images/main/m-bg-circle-deep-blue.svg" alt="background circle">
+            <img class="top-[18%] left-[94%] w-[35%] min-w-56" src="/static/images/main/m-bg-circle-stripe-blue.svg" alt="background circle">
+            <img class="top-[68%] left-[17%] w-[27%] min-w-28" src="/static/images/main/m-bg-circle-stripe-white-2.svg" alt="background circle">
+            <img class="top-[72%] left-[85%] w-[50%] min-w-64" src="/static/images/main/m-bg-circle-light-blue.svg" alt="background circle">
+            <img class="top-[95%] left-[27%] w-[35%] min-w-36" src="/static/images/main/m-bg-circle-light-blue-2.svg" alt="background circle">
         </div>
     </div>
 </body>

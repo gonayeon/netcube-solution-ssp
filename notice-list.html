@@ -1,41 +1,214 @@
 <!DOCTYPE html>
-<html
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/default-layout.html}"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="ko">
 <head>
-    <title th:text="#{page.title.notice.list}">[NPass Self Serviced Portal] Notice List Page</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>&#91;NPass Self Serviced Portal&#92; Notice List Page</title>
 
-    <th:block layout:fragment="script">
-        <script th:inline="javascript">
-            const pageName = "NOTICE_LIST";
-        </script>
-    </th:block>
+    <style type="text/tailwindcss">
+        @font-face {
+            font-family: 'Poppins';
+            font-weight: 300;
+            font-display: swap;
+            src: url(/static/font/Poppins/Poppins-Light.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Poppins';
+            font-weight: 400;
+            font-display: swap;
+            src: url(/static/font/Poppins/Poppins-Regular.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Poppins';
+            font-weight: 500;
+            font-display: swap;
+            src: url(/static/font/Poppins/Poppins-Medium.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Poppins';
+            font-weight: 600;
+            font-display: swap;
+            src: url(/static/font/Poppins/Poppins-SemiBold.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Poppins';
+            font-weight: 700;
+            font-display: swap;
+            src: url(/static/font/Poppins/Poppins-Bold.ttf) format('truetype');
+        }
+        @layer base {
+            html, body {
+                @apply font-poppins text-[13px] sm:text-[16px] md:text-[20px] lg:text-[16px];
+            }
+            select {
+                @apply outline-none appearance-none border-none;
+            }
+            input {
+                @apply outline-none appearance-none;
+            }
+            ::-webkit-scrollbar{
+                @apply hidden;
+            }
+        }
+        @layer components {
+            .transition-all-3ms-ease {
+                @apply transition-all duration-300 ease-in-out;
+            }
+            .paging-btn:has(> a.active) {
+                @apply bg-blue-ribbon-950 text-white;
+            }
+        }
+    </style>
+
+    <script src="/static/js/library/jquery-3.5.1.min.js"></script>
+    <script src="/static/js/library/tw3.4.1.js"></script>
+    <script src="/static/js/common/tailwind.config.js"></script>
+
+    <script src="/static/js/common/header.js"></script>
 </head>
 <body>
-    <main layout:fragment="content" class="h-screen pt-[8.9vh] lg:pt-20 lg:pb-[100px] md:min-h-[705px] overflow-auto">
+    <header id="pc-header" class="fixed top-0 left-0 w-full h-[8.9vh] lg:h-20 bg-cornflower-blue-600 lg:bg-blue-ribbon-950">
+        <!-- pc header -->
+        <div class="hidden w-[95%] max-w-[1160px] mx-auto h-full lg:flex justify-between items-center">
+            <h1 class="mr-24">
+                <a href="index.html"><img src="/static/images/main/mainLogo.svg" class="w-32 h-auto" alt="NPass"></a>
+            </h1>
+
+            <nav class="grow">
+                <ul class="flex gap-24">
+                    <li>
+                        <a class="nav-item group relative text-[22px] font-bold text-white" href="device.html">
+                            <div class="group-hover:block hidden absolute top-0 -right-3 w-2 h-2 bg-white rounded-full"></div>
+                            <span>Device</span>
+                        </a>
+                        <div class="menu-explain hidden absolute top-20 left-0 w-full h-[233px]" style="background: url(/static/images/banner/device-banner.png) no-repeat center/cover;">
+                            <div class="w-[95%] max-w-[1160px] mx-auto mt-[68px] text-white pl-56">
+                                <h2 class="text-[40px] tracking-[0.095em] font-bold">사용자 단말 관리</h2>
+                                <p class="text-sm mt-2">등록된 단말을 관리 하실 수 있습니다.</p>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li>
+                        <a class="nav-item group relative text-[22px] font-bold text-white" href="faq-list.html">
+                            <div class="group-hover:block hidden absolute top-0 -right-3 w-2 h-2 bg-white rounded-full"></div>
+                            <span>FAQ</span>
+                        </a>
+                        <div class="menu-explain hidden absolute top-20 left-0 w-full h-[233px]" style="background: url(/static/images/banner/faq-banner.svg) no-repeat center/cover;">
+                            <div class="w-[95%] max-w-[1160px] mx-auto mt-[68px] text-white pl-56">
+                                <h2 class="text-[40px] tracking-[0.095em] font-bold">자주하는 질문</h2>
+                                <p class="text-sm mt-2">자주하는 질문을 확인해보세요.</p>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li>
+                        <a class="nav-item group relative text-[22px] font-bold text-white" href="notice-list.html">
+                            <div class="group-hover:block hidden absolute top-0 -right-3 w-2 h-2 bg-white rounded-full"></div>
+                            <span>Notice</span>
+                        </a>
+                        <div class="menu-explain hidden absolute top-20 left-0 w-full h-[233px]" style="background: url(/static/images/banner/notice-banner.svg) no-repeat center/cover;">
+                            <div class="w-[95%] max-w-[1160px] mx-auto mt-[68px] text-white pl-56">
+                                <h2 class="text-[40px] tracking-[0.095em] font-bold">공지사항</h2>
+                                <p class="text-sm mt-2">새로운 공지사항을 알려드립니다.</p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+
+            <form class="flex items-center gap-3 text-white text-sm">
+                <button type="button" class="logout-btn border-b border-white hover:border-portage-400 hover:text-portage-400 transition-all-3ms-ease">
+                    <a href="/">로그아웃</a>
+                </button>
+
+                <a href="#" target="_blank" class="hover:text-portage-400 transition-all-3ms-ease ml-3">매뉴얼</a>
+
+                <select class="w-24 pl-3 pr-7 bg-transparent *:text-black" style="background: url(/static/images/main/selectWhiteTriangle.png) no-repeat top 3px right 8px/16px">
+                    <option value="ko">한국어</option>
+                    <option value="en">English</option>
+                </select>
+            </form>
+        </div>
+
+        <!-- mobile header -->
+        <div class="lg:hidden h-full flex items-center relative" id="mobileHeader">
+            <button id="hamburger-button" type="button" class="h-[41.6%] mx-[4%] ">
+                <img src="/static/images/main/hamburger-button.svg" class="w-auto h-full" alt="go to menu">
+            </button>
+            <h1 class="top-logo absolute top-1/2 left-[52%] -translate-x-1/2 -translate-y-1/2 text-[1.6rem] text-white font-bold text-nowrap">
+                공지사항
+            </h1>
+        </div>
+        
+        <!-- mobile side -->
+        <div id="sideMenuWrap" class="block lg:hidden fixed top-0 -left-full w-full h-screen z-10">
+            <aside id="sideMenu" class="fixed top-0 -left-full z-10 flex flex-col justify-between w-[51%] min-w-52 max-w-[450px] h-full bg-white rounded-tr-3xl 
+            rounded-br-3xl shadow-[1px_2px_4px_0_rgba(0,0,0,0.25)] overflow-hidden">
+                <div class="h-[9%] min-h-[60px] px-[10%] border-b border-[#c1c7dc] flex items-center">
+                    <h2 class="h-1/2">
+                        <a href="/"><img src="/static/images/main/sidebar-logo.svg" class="w-auto h-full" alt="NPass"></a>
+                    </h2>
+                </div>
+
+                <div class="flex justify-center items-center h-[12.7vh] min-h-20">
+                    <form class="border border-cornflower-blue-300 flex justify-center items-center w-[90%] rounded-lg md:rounded-2xl overflow-hidden">
+                        <label class="flex justify-center items-center w-1/2 text-boulder-500 text-[4vw] font-bold bg-white py-[0.5vh] transition-all duration-150 has-[:checked]:text-black has-[:checked]:bg-cornflower-blue-300">
+                            <input type="radio" name="language" value="ko" class="appearance-none" checked>
+                            <span>KOR</span>
+                        </label>
+                        <label class="flex justify-center items-center w-1/2 text-boulder-500 text-[4vw] font-bold bg-white py-[0.5vh] transition-all duration-150 has-[:checked]:text-black has-[:checked]:bg-cornflower-blue-300">
+                            <input type="radio" name="language" value="en" class="appearance-none">
+                            <span>ENG</span>
+                        </label>
+                    </form>
+                </div>
+
+                <ul class="grow *:mb-[2vh]">
+                    <li>
+                        <a class="block pl-[10%] pr-[9%] py-1 w-[90%] rounded-r-full text-2xl font-semibold hover:text-right hover:bg-black hover:text-white" href="device.html">Device</a>
+                    </li>
+                    <li>
+                        <a class="block pl-[10%] pr-[9%] py-1 w-[90%] rounded-r-full text-2xl font-semibold hover:text-right hover:bg-black hover:text-white" href="faq-list.html">FAQ</a>
+                    </li>
+                    <li>
+                        <a class="block pl-[10%] pr-[9%] py-1 w-[90%] rounded-r-full text-2xl font-semibold hover:text-right hover:bg-black hover:text-white" href="notice-list.html">NOTICE</a>
+                    </li>
+                </ul>
+
+                <div class="border-t border-[#c1c7dc] flex justify-end items-center h-[9vh]">
+                    <button type="button" class="w-fit h-full">
+                        <img src="/static/images/headerFooter/manual-btn.png" class="w-auto h-full" alt="go to manual">
+                    </button>
+
+                    <button type="button" class="w-fit h-full">
+                        <img src="/static/images/headerFooter/logout-btn.png" class="w-auto h-full" alt="logout">
+                    </button>
+                </div>
+            </aside>
+        </div>
+    </header>
+
+    <main class="h-screen pt-[8.9vh] lg:pt-20 lg:pb-[100px] md:min-h-[705px] overflow-auto">
         <!-- pc contents -->
         <div class="hidden lg:block w-[95%] max-w-[1160px] mx-auto pt-[4.5vh] overflow-auto">
             <div class="flex h-[45px] mb-[1vh]">
                 <h3 class="text-3xl font-bold flex items-center mr-12">
                     <span class="w-[9px] h-[9px] bg-black rounded-full mr-[15px]"></span>
-                    <span th:text="#{pc.notice.list.title}">공지사항</span>
+                    <span>공지사항</span>
                 </h3>
                 <ul class="grow h-1/2 border-b border-waterloo-600 flex justify-end items-center text-xs text-waterloo-600 *:px-1">
-                    <li><a href="/" th:text="#{pc.common.path.root}">HOME</a></li>
+                    <li><a href="/">HOME</a></li>
                     <li>&#62;</li>
-                    <li><a href="/notice" th:text="#{pc.common.path.notice}">NOTICE</a></li>
+                    <li><a href="notice-list.html">NOTICE</a></li>
                 </ul>
             </div>
 
-            <form th:action="@{/notice}" th:method="get" class="h-[38px] text-[14px] flex justify-end mb-[3vh]">
+            <form class="h-[38px] text-[14px] flex justify-end mb-[3vh]">
                 <div class="search-input border border-portage-500 w-[360px] rounded-[3px] flex has-[input:focus]:shadow-[2px_2px_4px_rgba(0,0,0,0.25)] transition-all-3ms-ease">
-                    <input type="hidden" name="page" th:value="1">
-                    <input type="hidden" name="size" th:value="10">
-                    <input type="text" name="searchKeyword" th:value="${param.searchKeyword}" th:placeholder="#{pc.notice.list.search.input.placeholder}" autocomplete="off" class="searchBar grow px-[10px] bg-transparent">
-                    <button type="submit" id="searchBtn" class="notice_searchBtn bg-portage-500 w-[38px] flex justify-center items-center">
-                        <img src="/images/icon/search.svg" alt="search ">
+                    <input type="text" name="searchKeyword" placeholder="검색어를 입력하세요." autocomplete="off" class="grow px-[10px] bg-transparent">
+                    <button type="submit" id="searchBtn" class="bg-portage-500 w-[38px] flex justify-center items-center">
+                        <img src="/static/images/icon/search.svg" alt="search">
                     </button>
                 </div>
             </form>
@@ -44,68 +217,127 @@
                 <table class="w-full text-center table-fixed *:*:h-[50px]">
                     <thead class="bg-blue-ribbon-950 text-sm font-semibold text-white">
                         <tr class="*:after:content-['|'] *:after:font-normal *:after:float-right">
-                            <th scope="col" class="w-[9%]" th:text="#{pc.notice.list.tableHeader.no}">번호</th>
-                            <th scope="col" class="w-[57%]" th:text="#{pc.notice.list.tableHeader.title}">제목</th>
-                            <th scope="col" class="w-[18%]" th:text="#{pc.notice.list.tableHeader.registerDate}">작성일</th>
-                            <th scope="col" class="w-[16%] last:after:content-none"  th:text="#{pc.notice.list.tableHeader.adminId}">작성자</th>
+                            <th scope="col" class="w-[9%]">번호</th>
+                            <th scope="col" class="w-[57%]">제목</th>
+                            <th scope="col" class="w-[18%]">작성일</th>
+                            <th scope="col" class="w-[16%] last:after:content-none">작성자</th>
                         </tr>
                     </thead>
 
                     <tbody class="text-xs px-1 tracking-[0.095em] *:border-b *:border-mischka-300">
-                        <tr th:if="${#lists.isEmpty(notices)}">
-                            <td colspan="4" th:text="#{pc.notice.list.no.list}">게시물이 존재하지 않습니다.</td>
-                        </tr>
+                        <!-- 공지사항 없을때 -->
+                        <!-- <tr>
+                            <td colspan="4">게시물이 존재하지 않습니다.</td>
+                        </tr> -->
 
-                        <tr th:if="${!#lists.isEmpty(notices)}" th:each="notice : ${notices}" class="hover:bg-[#e5ebff] transition-all-3ms-ease odd:bg-boulder-50 *:px-[1%] *:overflow-hidden *:whitespace-nowrap *:text-ellipsis">
-                            <td th:text="${notice.noticeId}">번호</td>
-                            <td th:id="noticeId_ +${notice.noticeId}">
-                                <a th:href="@{/notice/detail/{id}
-                                                            (id            = ${notice.noticeId},
-                                                             page          = ${pagination.page},
-                                                             size          = 10,
-                                                             searchKeyword = ${param.searchKeyword})}"
-                                    th:text="${notice.noticeTitle}">제목</a>
+                        <tr class="hover:bg-[#e5ebff] transition-all-3ms-ease odd:bg-boulder-50 *:px-[1%] *:overflow-hidden *:whitespace-nowrap *:text-ellipsis">
+                            <td>1</td>
+                            <td>
+                                <a href="notice-detail.html">title 01</a>
                             </td>
-                            <td th:text="${#temporals.format(notice.noticeCreateDate, 'yyyy/MM/dd')}">작성일</td>
-                            <td th:text="${notice.adminId}">작성자</td>
+                            <td>2024/05/13</td>
+                            <td>Admin</td>
+                        </tr>
+                        <tr class="hover:bg-[#e5ebff] transition-all-3ms-ease odd:bg-boulder-50 *:px-[1%] *:overflow-hidden *:whitespace-nowrap *:text-ellipsis">
+                            <td>2</td>
+                            <td>
+                                <a href="notice-detail.html">title 02</a>
+                            </td>
+                            <td>2024/05/13</td>
+                            <td>Admin</td>
+                        </tr>
+                        <tr class="hover:bg-[#e5ebff] transition-all-3ms-ease odd:bg-boulder-50 *:px-[1%] *:overflow-hidden *:whitespace-nowrap *:text-ellipsis">
+                            <td>3</td>
+                            <td>
+                                <a href="notice-detail.html">title 03</a>
+                            </td>
+                            <td>2024/05/13</td>
+                            <td>Admin</td>
+                        </tr>
+                        <tr class="hover:bg-[#e5ebff] transition-all-3ms-ease odd:bg-boulder-50 *:px-[1%] *:overflow-hidden *:whitespace-nowrap *:text-ellipsis">
+                            <td>4</td>
+                            <td>
+                                <a href="notice-detail.html">title 04</a>
+                            </td>
+                            <td>2024/05/13</td>
+                            <td>Admin</td>
+                        </tr>
+                        <tr class="hover:bg-[#e5ebff] transition-all-3ms-ease odd:bg-boulder-50 *:px-[1%] *:overflow-hidden *:whitespace-nowrap *:text-ellipsis">
+                            <td>5</td>
+                            <td>
+                                <a href="notice-detail.html">title 05</a>
+                            </td>
+                            <td>2024/05/13</td>
+                            <td>Admin</td>
+                        </tr>
+                        <tr class="hover:bg-[#e5ebff] transition-all-3ms-ease odd:bg-boulder-50 *:px-[1%] *:overflow-hidden *:whitespace-nowrap *:text-ellipsis">
+                            <td>6</td>
+                            <td>
+                                <a href="notice-detail.html">title 06</a>
+                            </td>
+                            <td>2024/05/13</td>
+                            <td>Admin</td>
+                        </tr>
+                        <tr class="hover:bg-[#e5ebff] transition-all-3ms-ease odd:bg-boulder-50 *:px-[1%] *:overflow-hidden *:whitespace-nowrap *:text-ellipsis">
+                            <td>7</td>
+                            <td>
+                                <a href="notice-detail.html">title 07</a>
+                            </td>
+                            <td>2024/05/13</td>
+                            <td>Admin</td>
+                        </tr>
+                        <tr class="hover:bg-[#e5ebff] transition-all-3ms-ease odd:bg-boulder-50 *:px-[1%] *:overflow-hidden *:whitespace-nowrap *:text-ellipsis">
+                            <td>8</td>
+                            <td>
+                                <a href="notice-detail.html">title 08</a>
+                            </td>
+                            <td>2024/05/13</td>
+                            <td>Admin</td>
+                        </tr>
+                        <tr class="hover:bg-[#e5ebff] transition-all-3ms-ease odd:bg-boulder-50 *:px-[1%] *:overflow-hidden *:whitespace-nowrap *:text-ellipsis">
+                            <td>9</td>
+                            <td>
+                                <a href="notice-detail.html">title 09</a>
+                            </td>
+                            <td>2024/05/13</td>
+                            <td>Admin</td>
                         </tr>
                     </tbody>
                 </table>
 
                 <ul id="pagination" class="flex justify-center items-center gap-1 h-[21px] mt-[4.5vh] *:h-full">
                     <li>
-                        <button type="button" th:onclick="|location.href='@{/notice(page          = ${pagination.startPage},
-                                                                                    size          = 10,
-                                                                                    searchKeyword = ${param.searchKeyword})}'|">
-                            <img src="/images/icon/first.svg" class="w-[21px] h-auto" alt="First Page">
+                        <button type="button">
+                            <img src="/static/images/icon/first.svg" class="w-[21px] h-auto" alt="First Page">
                         </button>
                     </li>
                     <li>
-                        <button type="button" class="btn" th:onclick="|location.href='@{/notice(page          = ${pagination.prevPage},
-                                                                                                size          = 10,
-                                                                                                searchKeyword = ${param.searchKeyword})}'|">
-                            <img src="/images/icon/prev.svg" class="w-[21px] h-auto" alt="Previous Page">
+                        <button type="button">
+                            <img src="/static/images/icon/prev.svg" class="w-[21px] h-auto" alt="Previous Page">
                         </button>
                     </li>
 
-                    <li th:each="pageNumber : ${#numbers.sequence(pagination.startPage, pagination.endPage)}" class="paging-btn w-[21px] h-[21px] rounded-[3px] flex justify-center items-center transition-all-3ms-ease *:pt-[1px]">
-                        <a th:attr="class=${pageNumber == pagination.page ? 'active' : ''}" th:href="@{/notice(page          = ${pageNumber},
-                                                                                                                size          = 10,
-                                                                                                                searchKeyword = ${param.searchKeyword})}" th:text="${pageNumber}">1</a>
+                    <li class="paging-btn w-[21px] h-[21px] rounded-[3px] flex justify-center items-center transition-all-3ms-ease *:pt-[1px]">
+                        <a href="#" class="active">1</a>
+                    </li>
+                    <li class="paging-btn w-[21px] h-[21px] rounded-[3px] flex justify-center items-center transition-all-3ms-ease *:pt-[1px]">
+                        <a href="#">2</a>
+                    </li>
+                    <li class="paging-btn w-[21px] h-[21px] rounded-[3px] flex justify-center items-center transition-all-3ms-ease *:pt-[1px]">
+                        <a href="#">3</a>
+                    </li>
+                    <li class="paging-btn w-[21px] h-[21px] rounded-[3px] flex justify-center items-center transition-all-3ms-ease *:pt-[1px]">
+                        <a href="#">4</a>
                     </li>
 
                     <li>
-                        <button type="button" class="btn" th:onclick="|location.href='@{/notice(page          = ${pagination.nextPage},
-                                                                                                size          = 10,
-                                                                                                searchKeyword = ${param.searchKeyword})}'|">
-                            <img src="/images/icon/next.svg" class="w-[21px] h-auto" alt="Next Page">
+                        <button type="button">
+                            <img src="/static/images/icon/next.svg" class="w-[21px] h-auto" alt="Next Page">
                         </button>
                     </li>
                     <li>
-                        <button type="button" th:onclick="|location.href='@{/notice(page          = ${pagination.endPage},
-                                                                                    size          = 10,
-                                                                                    searchKeyword = ${param.searchKeyword})}'|">
-                            <img src="/images/icon/last.svg" class="w-[21px] h-auto" alt="Last Page">
+                        <button type="button">
+                            <img src="/static/images/icon/last.svg" class="w-[21px] h-auto" alt="Last Page">
                         </button>
                     </li>
                 </ul>
@@ -115,77 +347,164 @@
         <!-- mobile contents -->
         <div class="block lg:hidden h-full p-[3vh_4%]">
             <div class="border border-boulder-300 rounded-lg h-12 px-4 mb-[3vh] transition-all-3ms-ease has-[input:focus]:border-2 has-[input:focus]:border-blue-ribbon-500 has-[input:focus]:shadow-[4px_4px_8px_rgba(0,0,0,0.1)]">
-                <form th:action="@{/notice}" th:method="get" class="w-full h-full flex justify-between items-center">
-                    <input type="hidden" name="page" th:value="1">
-                    <input type="hidden" name="size" th:value="10">
-                    <input name="searchKeyword" type="text" th:value="${param.searchKeyword}" th:placeholder="#{mobile.notice.list.search.input.placeholder}" autocomplete="off" class="w-[90%]">
+                <form class="w-full h-full flex justify-between items-center">
+                    <input name="searchKeyword" type="text" placeholder="검색어를 입력하세요." autocomplete="off" class="w-[90%]">
                     <button type="submit" class="h-[55%]">
-                        <img src="/images/icon/search-grey.svg" class="h-full w-auto" alt="search">
+                        <img src="/static/images/icon/search-grey.svg" class="h-full w-auto" alt="search">
                     </button>
                 </form>
             </div>
 
             <ul class="h-[calc(100%-3rem-3vh-1.5rem-4.5vh)] text-sm overflow-auto *:mb-3">
-                <li class="border border-boulder-100 rounded-md p-[4%_3%]" th:if="${#lists.isEmpty(notices)}" th:text="#{mobile.notice.list.no.list}">게시물이 존재하지 않습니다.</li>
+                <!-- 게시물 없을 때 -->
+                <!-- <li class="border border-boulder-100 rounded-md p-[4%_3%]">게시물이 존재하지 않습니다.</li> -->
 
-                <li th:if="${!#lists.isEmpty(notices)}" th:each="notice : ${notices}" class="border border-boulder-100 rounded-md overflow-hidden">
-                    <div class="flex justify-between">
-                        <div class="grow p-[3%]">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-cornflower-blue-600 font-semibold" th:text="${#temporals.format(notice.noticeCreateDate, 'yyyy/MM/dd')}">registerDate</span>
-                                <span class="text-boulder-500 font-medium" th:text="${notice.adminId}">creator</span>
-                            </div>
-                            <h3 class="w-[75vw] font-medium whitespace-nowrap overflow-hidden text-ellipsis">
-                                <a th:href="@{/notice/detail/{id}
-                                                            (id            = ${notice.noticeId},
-                                                                page          = ${pagination.page},
-                                                                size          = 10,
-                                                                searchKeyword = ${param.searchKeyword})}"
-                                   th:text="${notice.noticeTitle}">title</a>
-                            </h3>
-                        </div>
+                <li class="border border-boulder-100 rounded-md overflow-hidden p-[3%]">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-cornflower-blue-600 font-semibold">2024/05/13</span>
+                        <span class="text-boulder-500 font-medium">creator</span>
                     </div>
+                    <h3 class="w-[75vw] font-medium whitespace-nowrap overflow-hidden text-ellipsis">
+                        <a href="notice-detail.html">title</a>
+                    </h3>
+                </li>
+                <li class="border border-boulder-100 rounded-md overflow-hidden p-[3%]">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-cornflower-blue-600 font-semibold">2024/05/13</span>
+                        <span class="text-boulder-500 font-medium">creator</span>
+                    </div>
+                    <h3 class="w-[75vw] font-medium whitespace-nowrap overflow-hidden text-ellipsis">
+                        <a href="notice-detail.html">title</a>
+                    </h3>
+                </li>
+                <li class="border border-boulder-100 rounded-md overflow-hidden p-[3%]">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-cornflower-blue-600 font-semibold">2024/05/13</span>
+                        <span class="text-boulder-500 font-medium">creator</span>
+                    </div>
+                    <h3 class="w-[75vw] font-medium whitespace-nowrap overflow-hidden text-ellipsis">
+                        <a href="notice-detail.html">title</a>
+                    </h3>
+                </li>
+                <li class="border border-boulder-100 rounded-md overflow-hidden p-[3%]">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-cornflower-blue-600 font-semibold">2024/05/13</span>
+                        <span class="text-boulder-500 font-medium">creator</span>
+                    </div>
+                    <h3 class="w-[75vw] font-medium whitespace-nowrap overflow-hidden text-ellipsis">
+                        <a href="notice-detail.html">title</a>
+                    </h3>
+                </li>
+                <li class="border border-boulder-100 rounded-md overflow-hidden p-[3%]">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-cornflower-blue-600 font-semibold">2024/05/13</span>
+                        <span class="text-boulder-500 font-medium">creator</span>
+                    </div>
+                    <h3 class="w-[75vw] font-medium whitespace-nowrap overflow-hidden text-ellipsis">
+                        <a href="notice-detail.html">title</a>
+                    </h3>
+                </li>
+                <li class="border border-boulder-100 rounded-md overflow-hidden p-[3%]">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-cornflower-blue-600 font-semibold">2024/05/13</span>
+                        <span class="text-boulder-500 font-medium">creator</span>
+                    </div>
+                    <h3 class="w-[75vw] font-medium whitespace-nowrap overflow-hidden text-ellipsis">
+                        <a href="notice-detail.html">title</a>
+                    </h3>
+                </li>
+                <li class="border border-boulder-100 rounded-md overflow-hidden p-[3%]">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-cornflower-blue-600 font-semibold">2024/05/13</span>
+                        <span class="text-boulder-500 font-medium">creator</span>
+                    </div>
+                    <h3 class="w-[75vw] font-medium whitespace-nowrap overflow-hidden text-ellipsis">
+                        <a href="notice-detail.html">title</a>
+                    </h3>
+                </li>
+                <li class="border border-boulder-100 rounded-md overflow-hidden p-[3%]">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-cornflower-blue-600 font-semibold">2024/05/13</span>
+                        <span class="text-boulder-500 font-medium">creator</span>
+                    </div>
+                    <h3 class="w-[75vw] font-medium whitespace-nowrap overflow-hidden text-ellipsis">
+                        <a href="notice-detail.html">title</a>
+                    </h3>
                 </li>
             </ul>
 
             <div>
                 <ul id="pagination" class="flex justify-center items-center gap-1 h-[1.5rem] mt-[4vh] *:h-full">
                     <li>
-                        <button type="button" th:onclick="|location.href='@{/notice(page          = ${pagination.startPage},
-                                                                                    size          = 10,
-                                                                                    searchKeyword = ${param.searchKeyword})}'|">
-                            <img src="/images/icon/first.svg" class="w-[1.5rem] h-auto" alt="First Page">
+                        <button type="button">
+                            <img src="/static/images/icon/first.svg" class="w-[1.5rem] h-auto" alt="First Page">
                         </button>
                     </li>
                     <li>
-                        <button type="button" class="btn" th:onclick="|location.href='@{/notice(page          = ${pagination.prevPage},
-                                                                                                size          = 10,
-                                                                                                searchKeyword = ${param.searchKeyword})}'|">
-                            <img src="/images/icon/prev.svg" class="w-[1.5rem] h-auto" alt="Previous Page">
+                        <button type="button">
+                            <img src="/static/images/icon/prev.svg" class="w-[1.5rem] h-auto" alt="Previous Page">
                         </button>
                     </li>
-                    <li th:each="pageNumber : ${#numbers.sequence(pagination.startPage, pagination.endPage)}" class="paging-btn w-[1.5rem] h-[1.5rem] rounded-[3px] flex justify-center items-center transition-all-3ms-ease">
-                        <a th:attr="class=${pageNumber == pagination.page ? 'active' : ''}" th:href="@{/notice(page          = ${pageNumber},
-                                                                                                               size          = 10,
-                                                                                                               searchKeyword = ${param.searchKeyword})}" th:text="${pageNumber}">1</a>
+
+                    <li class="paging-btn w-[1.5rem] h-[1.5rem] rounded-[3px] flex justify-center items-center transition-all-3ms-ease">
+                        <a class="active" href="#">1</a>
                     </li>
+                    <li class="paging-btn w-[1.5rem] h-[1.5rem] rounded-[3px] flex justify-center items-center transition-all-3ms-ease">
+                        <a href="#">2</a>
+                    </li>
+                    <li class="paging-btn w-[1.5rem] h-[1.5rem] rounded-[3px] flex justify-center items-center transition-all-3ms-ease">
+                        <a href="#">3</a>
+                    </li>
+                    <li class="paging-btn w-[1.5rem] h-[1.5rem] rounded-[3px] flex justify-center items-center transition-all-3ms-ease">
+                        <a href="#">4</a>
+                    </li>
+                    <li class="paging-btn w-[1.5rem] h-[1.5rem] rounded-[3px] flex justify-center items-center transition-all-3ms-ease">
+                        <a href="#">5</a>
+                    </li>
+
                     <li>
-                        <button type="button" class="btn" th:onclick="|location.href='@{/notice(page          = ${pagination.nextPage},
-                                                                                                size          = 10,
-                                                                                                searchKeyword = ${param.searchKeyword})}'|">
-                            <img src="/images/icon/next.svg" class="w-[1.5rem] h-auto" alt="Next Page">
+                        <button type="button">
+                            <img src="/static/images/icon/next.svg" class="w-[1.5rem] h-auto" alt="Next Page">
                         </button>
                     </li>
                     <li>
-                        <button type="button" th:onclick="|location.href='@{/notice(page          = ${pagination.endPage},
-                                                                                    size          = 10,
-                                                                                    searchKeyword = ${param.searchKeyword})}'|">
-                            <img src="/images/icon/last.svg" class="w-[1.5rem] h-auto" alt="Last Page">
+                        <button type="button">
+                            <img src="/static/images/icon/last.svg" class="w-[1.5rem] h-auto" alt="Last Page">
                         </button>
                     </li>
                 </ul>
             </div>
         </div>
     </main>
+
+    <footer id="pc-footer" class="hidden lg:block fixed bottom-0 left-0 w-full h-[100px] bg-white">
+        <div class="w-[95%] max-w-[1160px] mx-auto h-full flex justify-between items-center">
+            <div class="text-boulder-400">
+                <ul class="flex mb-1 *:after:content-['&#124;'] *:after:mx-[0.625rem] *:after:font-normal *:after:text-boulder-400">
+                    <li class="text-boulder-500 font-semibold">
+                        <a href="#">개인정보 처리방침</a>
+                    </li>
+                    <li>
+                        <span>&#40;주&#41;넷큐브</span>
+                    </li>
+                    <li class="last:after:content-none">
+                        <span>All Rights Reserved.</span>
+                    </li>
+                </ul>
+                <ul class="flex *:after:content-['&#124;'] *:after:mx-[0.625rem]">
+                    <li>
+                        <span>대표이사 유동호</span>
+                    </li>
+                    <li class="last:after:content-none">
+                        <span>&#40;우&#41; 08215 서울 구로구 경인로53길 90 STX-W타워 714호</span>
+                    </li>
+                </ul>
+            </div>
+    
+            <a href="/" class="h-2/5"><img class="w-auto h-full" alt="YourLogo"></a>
+        </div>
+    </footer>
+
+    <div id="modal-wrap"></div>
 </body>
 </html>
